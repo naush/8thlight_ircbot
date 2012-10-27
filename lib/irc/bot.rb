@@ -3,6 +3,11 @@ require 'cgi'
 module IRC
   module Bot
     def self.image_search(client, query)
+      if client.sleep
+        client.action("is in a deep slumber...")
+        return
+      end
+
       escaped_query = CGI.escape(query)
       result = `curl "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=#{escaped_query}&userip=0.0.0.0"`
       hash = JSON.parse(result)
@@ -15,6 +20,11 @@ module IRC
     end
 
     def self.weather_forecast(client, query)
+      if client.sleep
+        client.action("is in a deep slumber...")
+        return
+      end
+
       escaped_query = CGI.escape(query)
       result = `curl http://autocomplete.wunderground.com/aq?query=#{escaped_query}`
       hash = JSON.parse(result)
@@ -33,6 +43,7 @@ module IRC
 
     def self.handle_server_input(client, input)
       puts "> #{input}"
+
       case input.strip
       when /^.*PING :(.+)$/i
         client.pong($1)
@@ -40,6 +51,16 @@ module IRC
         image_search(client, $1)
       when /^.*PRIVMSG ##{client.channel} :#{client.nick}: weather for (.*)$/i
         weather_forecast(client, $1)
+      when /^.*PRIVMSG ##{client.channel} :#{client.nick}: reboot$/i
+        raise Exception
+      when /^.*PRIVMSG ##{client.channel} :#{client.nick}: (die|sleep|stand by)$/i
+        client.action("casts a sleep spell on herself.")
+        client.sleep = true
+      when /^.*PRIVMSG ##{client.channel} :#{client.nick}: wake( up)?$/i
+        client.action("is slowly returning to this world...")
+        client.sleep = false
+      when /^.*PRIVMSG ##{client.channel} :#{client.nick}: what is the meaning of life(\?)?$/i
+        client.message("42.")
       end
     end
   end

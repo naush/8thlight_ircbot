@@ -8,19 +8,25 @@ module IRC
     attr_reader :nick
     attr_reader :channel
     attr_accessor :socket
+    attr_accessor :sleep
 
     def initialize(server, port, nick)
       @server = server
       @port = port
       @nick = nick
+      @sleep = false
+    end
+
+    def disconnect
+      @socket.close if @socket
     end
 
     def connect
       tcp_socket = TCPSocket.new(@server, @port)
       @socket = OpenSSL::SSL::SSLSocket.new(tcp_socket)
       @socket.connect
-      @socket.puts("USER Anonymous 8 * :Anonymous\n")
-      @socket.puts("NICK #{@nick}\n")
+      send("USER Anonymous 8 * :Anonymous")
+      send("NICK #{@nick}")
     end
 
     def join(channel, password = nil)
@@ -44,6 +50,10 @@ module IRC
 
     def pong(server_name)
       send("PONG :#{server_name}")
+    end
+
+    def action(description)
+      message("\u0001ACTION #{description}\u0001")
     end
   end
 end
