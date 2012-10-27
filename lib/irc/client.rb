@@ -8,13 +8,11 @@ module IRC
     attr_reader :nick
     attr_reader :channel
     attr_accessor :socket
-    attr_accessor :sleep
 
     def initialize(server, port, nick)
       @server = server
       @port = port
       @nick = nick
-      @sleep = false
     end
 
     def disconnect
