@@ -19,23 +19,23 @@ module IRC
       tcp_socket = TCPSocket.new(@server, @port)
       @socket = OpenSSL::SSL::SSLSocket.new(tcp_socket)
       @socket.connect
-      @socket.puts("USER Anonymous 8 * :Anonymous\n", 0)
-      @socket.puts("NICK #{@nick}\n", 0)
+      @socket.puts("USER Anonymous 8 * :Anonymous\n")
+      @socket.puts("NICK #{@nick}\n")
     end
 
     def join(channel, password = nil)
       @channel = channel
 
       if password
-        @socket.puts("JOIN ##{@channel} #{password}\n", 0)
+        @socket.puts("JOIN ##{@channel} #{password}\n")
       else
-        @socket.puts("JOIN ##{@channel}\n", 0)
+        @socket.puts("JOIN ##{@channel}\n")
       end
     end
 
     def send(command)
       puts "< #{command}"
-      @socket.puts("#{command}\n", 0)
+      @socket.puts("#{command}\n")
     end
 
     def message(text)

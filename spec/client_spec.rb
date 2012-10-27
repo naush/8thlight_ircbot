@@ -20,8 +20,8 @@ describe IRC::Client do
     ssl_socket = mock("SSLSocket")
     OpenSSL::SSL::SSLSocket.should_receive(:new).with(socket).and_return(ssl_socket)
     ssl_socket.should_receive(:connect)
-    ssl_socket.should_receive(:puts).with("USER Anonymous 8 * :Anonymous\n", 0)
-    ssl_socket.should_receive(:puts).with("NICK joe\n", 0)
+    ssl_socket.should_receive(:puts).with("USER Anonymous 8 * :Anonymous\n")
+    ssl_socket.should_receive(:puts).with("NICK joe\n")
 
     client.connect
     client.socket.should == ssl_socket
@@ -31,7 +31,7 @@ describe IRC::Client do
     it "joins a room" do
       client = IRC::Client.new('irc.8thlight.com', 6697, 'joe')
       mock_socket = mock
-      mock_socket.should_receive(:puts).with("JOIN #8thlight\n", 0)
+      mock_socket.should_receive(:puts).with("JOIN #8thlight\n")
       client.socket = mock_socket
       client.join("8thlight")
     end
@@ -39,7 +39,7 @@ describe IRC::Client do
     it "joins a room with password" do
       client = IRC::Client.new('irc.8thlight.com', 6697, 'joe')
       mock_socket = mock
-      mock_socket.should_receive(:puts).with("JOIN #8thlight password\n", 0)
+      mock_socket.should_receive(:puts).with("JOIN #8thlight password\n")
       client.socket = mock_socket
       client.join("8thlight", "password")
     end
@@ -49,8 +49,8 @@ describe IRC::Client do
     client = IRC::Client.new('irc.8thlight.com', 6697, 'joe')
 
     mock_socket = mock
-    mock_socket.should_receive(:puts).with("JOIN #8thlight\n", 0)
-    mock_socket.should_receive(:puts).with("PRIVMSG #8thlight :I'm a real boy!\n", 0)
+    mock_socket.should_receive(:puts).with("JOIN #8thlight\n")
+    mock_socket.should_receive(:puts).with("PRIVMSG #8thlight :I'm a real boy!\n")
 
     client.socket = mock_socket
     client.join('8thlight')
