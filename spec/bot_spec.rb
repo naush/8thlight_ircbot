@@ -14,7 +14,7 @@ describe IRC::Bot do
     end
 
     it "image_search" do
-      mock_client = mock("client", :channel => '8thlight', :nick => 'siri')
+      mock_client = mock("client", :channel => '8thlight', :nick => 'siri', :sleep => false)
       IRC::Bot.should_receive(:image_search).with(mock_client, 'kitties')
       IRC::Bot.handle_server_input(mock_client, ":naush!~naush@0.0.0.0 PRIVMSG #8thlight :siri: show me kitties")
     end
