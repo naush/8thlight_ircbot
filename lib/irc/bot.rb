@@ -6,7 +6,7 @@ module IRC
       escaped_query = CGI.escape(query)
       result = `curl "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=#{escaped_query}&userip=0.0.0.0"`
       hash = JSON.parse(result)
-      hash['responseData']['results'].sample['unescapedUrl']
+      client.message(hash['responseData']['results'].sample['unescapedUrl'])
     end
 
     def self.weather_forecast(client, query)
@@ -31,9 +31,9 @@ module IRC
       case input.strip
       when /^.*PING :(.+)$/i
         client.pong($1)
-      when /^.*PRIVMSG ##{client.channel} :joe: show me (.*)$/i
-        client.message(image_search($1))
-      when /^.*PRIVMSG ##{client.channel} :joe: weather for (.*)$/i
+      when /^.*PRIVMSG ##{client.channel} :#{client.nick}: show me (.*)$/i
+        image_search(client, $1)
+      when /^.*PRIVMSG ##{client.channel} :#{client.nick}: weather for (.*)$/i
         weather_forecast(client, $1)
       end
     end

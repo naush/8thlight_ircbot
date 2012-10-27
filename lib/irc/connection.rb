@@ -7,6 +7,7 @@ module IRC
       while true
         ready = select([client.socket, stdin])
         next unless ready
+
         ready.first.each do |io|
           if io == client.socket
             input = client.socket.gets
