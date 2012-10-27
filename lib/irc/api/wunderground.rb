@@ -4,10 +4,8 @@ module IRC
   module API
     module Wunderground
       def self.query(search_terms)
-        escaped_search_terms = CGI.escape(search_terms)
-        result = `curl http://autocomplete.wunderground.com/aq?search_terms=#{escaped_search_terms}`
+        result = `curl http://autocomplete.wunderground.com/aq?query=#{CGI.escape(search_terms)}`
         hash = JSON.parse(result)
-
         messages = []
 
         if hash['RESULTS'].size > 0
