@@ -3,12 +3,7 @@ if ARGV.size != 5
   exit
 end
 
-bot = ARGV[0]
-server = ARGV[1]
-port = ARGV[2]
-channel = ARGV[3]
-password = ARGV[4]
-
+bot, server, port, channel, password = ARGV
 require_relative 'lib/irc/client'
 require_relative 'lib/irc/connection'
 
