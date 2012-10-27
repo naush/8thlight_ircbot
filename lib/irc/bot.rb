@@ -6,7 +6,12 @@ module IRC
       escaped_query = CGI.escape(query)
       result = `curl "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=#{escaped_query}&userip=0.0.0.0"`
       hash = JSON.parse(result)
-      client.message(hash['responseData']['results'].sample['unescapedUrl'])
+      urls = hash.fetch('responseData', []).fetch('results', [])
+      if urls.empty?
+        client.message("Image not found.")
+      else
+        client.message(urls.sample['unescapedUrl'])
+      end
     end
 
     def self.weather_forecast(client, query)
