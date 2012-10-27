@@ -17,7 +17,7 @@ module IRC
         query = hash['RESULTS'].first['l']
         result = `curl http://api.wunderground.com/api/75f2849f81861d8b/forecast#{query}.json`
         hash = JSON.parse(result)
-        hash['forecast']['txt_forecast']['forecastday'].map do |forecast|
+        hash['forecast']['txt_forecast']['forecastday'].each do |forecast|
           client.message(forecast['title'] + ": " + forecast['fcttext'])
         end
         client.message("For more information, please visit: http://www.wunderground.com#{query}")
