@@ -2,7 +2,7 @@ require 'cgi'
 
 module IRC
   module Bot
-    def self.image_search(query)
+    def self.image_search(client, query)
       escaped_query = CGI.escape(query)
       result = `curl "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=#{escaped_query}&userip=0.0.0.0"`
       hash = JSON.parse(result)
