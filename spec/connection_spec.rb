@@ -19,9 +19,11 @@ describe IRC::Connection do
       mock_socket.should_receive(:gets).and_return(nil)
       mock_client = mock("client", :socket => mock_socket)
       mock_stdin = mock("$stdin")
+      mock_bot = mock("bot")
+      mock_bot.should_receive(:respond).with('PRIVMSG ME')
 
       IRC::Connection.should_receive(:select).with([mock_socket, mock_stdin]).and_return([[mock_socket]])
-      IRC::Bot.should_receive(:handle_server_input).with(mock_client, 'PRIVMSG ME')
+      IRC::Bot.should_receive(:new).with(mock_client).and_return(mock_bot)
       IRC::Connection.should_receive(:select).with([mock_socket, mock_stdin]).and_return([[mock_socket]])
 
       IRC::Connection.start(mock_client, mock_stdin)
