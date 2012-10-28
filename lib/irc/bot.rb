@@ -1,10 +1,12 @@
 require_relative 'api/google_image'
 require_relative 'api/wunderground'
+require_relative 'ai/markov'
 
 module IRC
   class Bot
     def initialize(client)
       @client = client
+      @ai = IRC::AI::Markov.new
     end
 
     def respond(input)
@@ -21,6 +23,9 @@ module IRC
         raise Exception
       when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: what is the meaning of life(\?)?$/i
         @client.message("42.")
+      when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: (.*)$/i
+        @ai.write($1)
+        @client.message(@ai.read($1))
       end
     end
 
