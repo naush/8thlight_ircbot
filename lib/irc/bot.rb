@@ -4,9 +4,9 @@ require_relative 'ai/markov'
 
 module IRC
   class Bot
-    def initialize(client)
+    def initialize(client, ai = IRC::AI::Markov.new)
       @client = client
-      @ai = IRC::AI::Markov.new
+      @ai = ai
     end
 
     def respond(input)
@@ -26,6 +26,8 @@ module IRC
       when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: (.*)$/i
         @ai.write($1)
         @client.message(@ai.read($1))
+      when /^.*PRIVMSG ##{@client.channel} :(.*)$/i
+        @ai.write($1)
       end
     end
 
