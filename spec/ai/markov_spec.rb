@@ -33,6 +33,12 @@ describe IRC::AI::Markov do
     ai.store["a a"].should == {"a" => 2}
   end
 
+  it "writes word in lowercase" do
+    ai = IRC::AI::Markov.new
+    ai.write("A b c")
+    ai.store["a b"].should == {"c" => 1}
+  end
+
   it "reads one word" do
     ai = IRC::AI::Markov.new
     ai.write("a b c")
@@ -58,6 +64,6 @@ describe IRC::AI::Markov do
     ai = IRC::AI::Markov.new
     ai.write("I have a book")
     ai.write("a book about Alchemy")
-    ai.read("I have").should == "I have a book about Alchemy."
+    ai.read("i have").should == "I have a book about Alchemy."
   end
 end

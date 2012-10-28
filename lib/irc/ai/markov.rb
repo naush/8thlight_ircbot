@@ -17,7 +17,7 @@ module IRC
         second_token = tokens.shift unless tokens.empty?
 
         until tokens.empty?
-          key = [first_token, second_token].join(" ")
+          key = [first_token, second_token].join(" ").downcase
           third_token = tokens.shift
           first_token = second_token
           second_token = third_token
@@ -30,11 +30,11 @@ module IRC
         second_token = tokens.pop unless tokens.empty?
         first_token = tokens.pop unless tokens.empty?
         words = [first_token, second_token].compact
-        key = words.join(" ")
+        key = words.join(" ").downcase
         until @store[key].empty? || words.size > 50
           token = @store[key].max_by(&:last).first
           words << token
-          key = [second_token, token].join(" ")
+          key = [second_token, token].join(" ").downcase
           second_token = token
         end
 
