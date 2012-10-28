@@ -12,7 +12,7 @@ module IRC
       end
 
       def write(text)
-        tokens = text.gsub(/[^a-zA-Z0-9\s]/, '').split
+        tokens = text.gsub(/[^a-zA-Z0-9\-\s]/, '').split
         first_token = tokens.shift unless tokens.empty?
         second_token = tokens.shift unless tokens.empty?
 
