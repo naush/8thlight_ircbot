@@ -42,13 +42,19 @@ module IRC
         key = words.join(" ").downcase
 
         tokens = @store[key]
+        metas = []
         until stop?(tokens, words)
           word, meta = tokens.max_by { |word, meta| meta.frequency }
           meta.visit = true
+          metas << meta
           words << word
           key = [second_word, word].join(" ").downcase
           second_word = word
           tokens = @store[key]
+        end
+
+        metas.each do |meta|
+          meta.visit = false
         end
 
         if words.size > 2

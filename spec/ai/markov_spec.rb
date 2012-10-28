@@ -72,4 +72,11 @@ describe IRC::AI::Markov do
     ai.write("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
     ai.read("woodchuck chuck").should == "Woodchuck chuck if a woodchuck chuck."
   end
+
+  it "resets visit" do
+    ai = IRC::AI::Markov.new
+    ai.write("a a a")
+    ai.read("a a")
+    ai.store["a a"]["a"].visit.should be_false
+  end
 end
