@@ -41,7 +41,7 @@ module IRC
         if words.size > 2
           return format(words.join(" "))
         else
-          return ["I beg your pardon?", "Excuse me?", "What was that?"].sample
+          return ["I beg your pardon?", "Excuse me?", "What did you call me?"].sample
         end
       end
 
