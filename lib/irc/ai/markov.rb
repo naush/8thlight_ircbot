@@ -7,26 +7,26 @@ module IRC
 
       def initialize
         @store = Hash.new do |store, key|
-          store[key] = Hash.new do |key, token|
+          store[key] = Hash.new do |key, word|
             meta = OpenStruct.new
             meta.frequency = 0
             meta.visit = false
-            key[token] = meta
+            key[word] = meta
           end
         end
       end
 
       def write(text)
-        tokens = text.gsub(/[^a-zA-Z0-9\-\s]/, '').split
-        first_token = tokens.shift unless tokens.empty?
-        second_token = tokens.shift unless tokens.empty?
+        words = text.gsub(/[^a-zA-Z0-9\-\s]/, '').split
+        first_word = words.shift unless words.empty?
+        second_word = words.shift unless words.empty?
 
-        until tokens.empty?
-          key = [first_token, second_token].join(" ").downcase
-          third_token = tokens.shift
-          first_token = second_token
-          second_token = third_token
-          @store[key][third_token].frequency += 1
+        until words.empty?
+          key = [first_word, second_word].join(" ").downcase
+          third_word = words.shift
+          first_word = second_word
+          second_word = third_word
+          @store[key][third_word].frequency += 1
         end
       end
 
