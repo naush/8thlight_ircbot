@@ -1,3 +1,5 @@
+require 'ostruct'
+
 module IRC
   module AI
     class Markov
@@ -6,7 +8,10 @@ module IRC
       def initialize
         @store = Hash.new do |store, key|
           store[key] = Hash.new do |key, token|
-            key[token] = 0
+            meta = OpenStruct.new
+            meta.frequency = 0
+            meta.visit = false
+            key[token] = meta
           end
         end
       end
@@ -21,21 +26,29 @@ module IRC
           third_token = tokens.shift
           first_token = second_token
           second_token = third_token
-          @store[key][third_token] += 1
+          @store[key][third_token].frequency += 1
         end
       end
 
+      def stop?(tokens, words)
+        words.size > 50 || tokens.empty? || tokens.values.all?(&:visit)
+      end
+
       def read(text)
-        tokens = text.gsub(/[^a-zA-Z0-9\-\s]/, '').split
-        second_token = tokens.pop unless tokens.empty?
-        first_token = tokens.pop unless tokens.empty?
-        words = [first_token, second_token].compact
+        words = text.gsub(/[^a-zA-Z0-9\-\s]/, '').split
+        second_word = words.pop unless words.empty?
+        first_word = words.pop unless words.empty?
+        words = [first_word, second_word].compact
         key = words.join(" ").downcase
-        until @store[key].empty? || words.size > 50
-          token = @store[key].max_by(&:last).first
-          words << token
-          key = [second_token, token].join(" ").downcase
-          second_token = token
+
+        tokens = @store[key]
+        until stop?(tokens, words)
+          word, meta = tokens.max_by { |word, meta| meta.frequency }
+          meta.visit = true
+          words << word
+          key = [second_word, word].join(" ").downcase
+          second_word = word
+          tokens = @store[key]
         end
 
         if words.size > 2

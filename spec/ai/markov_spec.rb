@@ -17,26 +17,26 @@ describe IRC::AI::Markov do
   it "writes three words" do
     ai = IRC::AI::Markov.new
     ai.write("a b c")
-    ai.store["a b"].should == {"c" => 1}
+    ai.store["a b"].keys.should == ["c"]
   end
 
   it "writes four words" do
     ai = IRC::AI::Markov.new
     ai.write("a b c d")
-    ai.store["a b"].should == {"c" => 1}
-    ai.store["b c"].should == {"d" => 1}
+    ai.store["a b"].keys.should == ["c"]
+    ai.store["b c"].keys.should == ["d"]
   end
 
   it "writes five duplicate words" do
     ai = IRC::AI::Markov.new
     ai.write("a a a a")
-    ai.store["a a"].should == {"a" => 2}
+    ai.store["a a"].keys.should == ["a"]
   end
 
   it "writes word in lowercase" do
     ai = IRC::AI::Markov.new
     ai.write("A b c")
-    ai.store["a b"].should == {"c" => 1}
+    ai.store["a b"].keys.should == ["c"]
   end
 
   it "reads one word" do
@@ -65,5 +65,11 @@ describe IRC::AI::Markov do
     ai.write("I have a book")
     ai.write("a book about Alchemy")
     ai.read("i have").should == "I have a book about Alchemy."
+  end
+
+  it "avoids a loop" do
+    ai = IRC::AI::Markov.new
+    ai.write("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
+    ai.read("woodchuck chuck").should == "Woodchuck chuck if a woodchuck chuck."
   end
 end
