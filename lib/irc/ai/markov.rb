@@ -26,7 +26,7 @@ module IRC
       end
 
       def read(text)
-        tokens = text.split
+        tokens = text.gsub(/[^a-zA-Z0-9\-\s]/, '').split
         second_token = tokens.pop unless tokens.empty?
         first_token = tokens.pop unless tokens.empty?
         words = [first_token, second_token].compact
@@ -38,10 +38,10 @@ module IRC
           second_token = token
         end
 
-        if words.size > 0
+        if words.size > 2
           return format(words.join(" "))
         else
-          return "I beg your pardon?"
+          return ["I beg your pardon?", "Excuse me?", "What was that?"].sample
         end
       end
 
