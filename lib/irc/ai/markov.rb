@@ -57,8 +57,10 @@ module IRC
         sentences = tokens.collect do |token|
           key = token.downcase
           words = generate(key)
-          sentence = words.join(" ")
-          format(sentence)
+          if words.size > 1
+            sentence = words.join(" ")
+            format(sentence)
+          end
         end.compact
 
         if sentences.empty?
