@@ -31,9 +31,7 @@ module IRC
         words.size > 50 || tokens.empty? || tokens.values.all?(&:visit)
       end
 
-      def read(text)
-        words = text.gsub(/[^a-zA-Z0-9\-\s]/, '').split
-        key = words.pop.downcase unless words.empty?
+      def generate(key)
         words = [key]
         tokens = @store[key]
         metas = []
@@ -51,10 +49,22 @@ module IRC
           meta.visit = false
         end
 
-        if words.size > 2
-          return format(words.join(" "))
-        else
+        return words
+      end
+
+      def read(text)
+        tokens = text.gsub(/[^a-zA-Z0-9\-\s\']/, '').split
+        sentences = tokens.collect do |token|
+          key = token.downcase
+          words = generate(key)
+          sentence = words.join(" ")
+          format(sentence)
+        end.compact
+
+        if sentences.empty?
           return ["I beg your pardon?", "Excuse me?", "What did you call me?"].sample
+        else
+          return sentences.max_by(&:size)
         end
       end
 

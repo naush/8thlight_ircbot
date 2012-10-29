@@ -63,8 +63,8 @@ describe IRC::AI::Markov do
 
   it "avoids a loop" do
     ai = IRC::AI::Markov.new
-    ai.write("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
-    ai.read("woodchuck chuck").should == "Chuck if a woodchuck chuck if."
+    ai.write("a b a")
+    ai.read("a").should == "A b a."
   end
 
   it "resets visit" do
