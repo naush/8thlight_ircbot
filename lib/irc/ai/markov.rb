@@ -17,7 +17,7 @@ module IRC
       end
 
       def write(text)
-        words = text.gsub(/[^a-zA-Z0-9\-\s]/, '').split
+        words = text.gsub(/[^a-zA-Z0-9\-\s\']/, '').split
         key = words.shift.downcase unless words.empty?
 
         until words.empty?
