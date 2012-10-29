@@ -18,15 +18,12 @@ module IRC
 
       def write(text)
         words = text.gsub(/[^a-zA-Z0-9\-\s]/, '').split
-        first_word = words.shift unless words.empty?
-        second_word = words.shift unless words.empty?
+        key = words.shift.downcase unless words.empty?
 
         until words.empty?
-          key = [first_word, second_word].join(" ").downcase
-          third_word = words.shift
-          first_word = second_word
-          second_word = third_word
-          @store[key][third_word].frequency += 1
+          word = words.shift
+          @store[key][word].frequency += 1
+          key = word.downcase
         end
       end
 
@@ -36,20 +33,17 @@ module IRC
 
       def read(text)
         words = text.gsub(/[^a-zA-Z0-9\-\s]/, '').split
-        second_word = words.pop unless words.empty?
-        first_word = words.pop unless words.empty?
-        words = [first_word, second_word].compact
-        key = words.join(" ").downcase
-
+        key = words.pop unless words.empty?
+        words = [key]
         tokens = @store[key]
         metas = []
+
         until stop?(tokens, words)
           word, meta = tokens.max_by { |word, meta| meta.frequency }
           meta.visit = true
           metas << meta
           words << word
-          key = [second_word, word].join(" ").downcase
-          second_word = word
+          key = word.downcase
           tokens = @store[key]
         end
 

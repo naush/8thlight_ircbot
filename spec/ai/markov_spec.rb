@@ -17,32 +17,26 @@ describe IRC::AI::Markov do
   it "writes three words" do
     ai = IRC::AI::Markov.new
     ai.write("a b c")
-    ai.store["a b"].keys.should == ["c"]
-  end
-
-  it "writes four words" do
-    ai = IRC::AI::Markov.new
-    ai.write("a b c d")
-    ai.store["a b"].keys.should == ["c"]
-    ai.store["b c"].keys.should == ["d"]
+    ai.store["a"].keys.should == ["b"]
+    ai.store["b"].keys.should == ["c"]
   end
 
   it "writes five duplicate words" do
     ai = IRC::AI::Markov.new
     ai.write("a a a a")
-    ai.store["a a"].keys.should == ["a"]
+    ai.store["a"].values.first.frequency.should == 3
   end
 
   it "writes word in lowercase" do
     ai = IRC::AI::Markov.new
-    ai.write("A b c")
-    ai.store["a b"].keys.should == ["c"]
+    ai.write("A b")
+    ai.store["a"].keys.should == ["b"]
   end
 
   it "reads one word" do
     ai = IRC::AI::Markov.new
-    ai.write("a b c")
-    ai.read("a b").should == "A b c."
+    ai.write("A b c")
+    ai.read("a").should == "A b c."
   end
 
   it "reads more frequent words" do
@@ -50,33 +44,33 @@ describe IRC::AI::Markov do
     ai.write("a b c")
     ai.write("a b c")
     ai.write("a b d")
-    ai.read("a b").should == "A b c."
+    ai.read("a").should == "A b c."
   end
 
   it "reads two words" do
     ai = IRC::AI::Markov.new
     ai.write("a b c")
     ai.write("b c d")
-    ai.read("a b").should == "A b c d."
+    ai.read("a").should == "A b c d."
   end
 
   it "reads a sentence" do
     ai = IRC::AI::Markov.new
     ai.write("I have a book")
     ai.write("a book about Alchemy")
-    ai.read("i have").should == "I have a book about Alchemy."
+    ai.read("i").should == "I have a book about Alchemy."
   end
 
   it "avoids a loop" do
     ai = IRC::AI::Markov.new
     ai.write("How much wood would a woodchuck chuck if a woodchuck could chuck wood?")
-    ai.read("woodchuck chuck").should == "Woodchuck chuck if a woodchuck chuck."
+    ai.read("woodchuck chuck").should == "Chuck if a woodchuck chuck if."
   end
 
   it "resets visit" do
     ai = IRC::AI::Markov.new
     ai.write("a a a")
     ai.read("a a")
-    ai.store["a a"]["a"].visit.should be_false
+    ai.store["a"]["a"].visit.should be_false
   end
 end
