@@ -24,8 +24,8 @@ module IRC
       when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: what is the meaning of life(\?)?$/i
         @client.message("42.")
       when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: (.*)$/i
-        @ai.write($1)
         @client.message(@ai.read($1))
+        @ai.write($1)
       when /^.*PRIVMSG ##{@client.channel} :(.*)$/i
         @ai.write($1)
       end
