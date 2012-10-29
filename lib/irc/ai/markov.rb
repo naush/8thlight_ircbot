@@ -40,7 +40,10 @@ module IRC
         metas = []
 
         until stop?(tokens, words)
-          word, meta = tokens.max_by { |word, meta| meta.frequency }
+          max_frequency = tokens.values.max_by(&:frequency).frequency
+          frequent_tokens = tokens.select { |word, meta| meta.frequency == max_frequency }
+          word = frequent_tokens.keys.sample
+          meta = frequent_tokens[word]
           meta.visit = true
           metas << meta
           words << word
