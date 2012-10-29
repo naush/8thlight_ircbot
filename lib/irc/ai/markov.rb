@@ -33,7 +33,7 @@ module IRC
 
       def read(text)
         words = text.gsub(/[^a-zA-Z0-9\-\s]/, '').split
-        key = words.pop unless words.empty?
+        key = words.pop.downcase unless words.empty?
         words = [key]
         tokens = @store[key]
         metas = []
