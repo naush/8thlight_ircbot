@@ -14,16 +14,22 @@ module IRC
             key[word] = meta
           end
         end
+
+        @stop_words = /a|an|the/
+        @break_words = /\.|\!|\?/
       end
 
       def write(text)
-        words = text.gsub(/[^a-zA-Z0-9\-\s\']/, '').split
-        key = words.shift.downcase unless words.empty?
+        sentences = text.split(@break_words)
+        sentences.each do |sentence|
+          words = sentence.gsub(/[^a-zA-Z0-9\-\s\']/, '').split
+          key = words.shift.downcase unless words.empty?
 
-        until words.empty?
-          word = words.shift
-          @store[key][word].frequency += 1
-          key = word.downcase
+          until words.empty?
+            word = words.shift
+            @store[key][word].frequency += 1
+            key = word.downcase
+          end
         end
       end
 

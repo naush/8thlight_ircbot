@@ -73,4 +73,10 @@ describe IRC::AI::Markov do
     ai.read("a a")
     ai.store["a"]["a"].visit.should be_false
   end
+
+  it "recognizes sentences" do
+    ai = IRC::AI::Markov.new
+    ai.write("a b c. a b c! a b d?")
+    ai.read("a").should == "A b c."
+  end
 end
