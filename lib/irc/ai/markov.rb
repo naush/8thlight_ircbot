@@ -64,7 +64,7 @@ module IRC
         if sentences.empty?
           return ["I beg your pardon?", "Excuse me?", "What did you call me?"].sample
         else
-          return sentences.max_by(&:size)
+          return sentences.sample
         end
       end
 
