@@ -14,6 +14,8 @@ module IRC
             key[word] = meta
           end
         end
+
+        @stop_words = ['a', 'an', 'the', 'and', 'but']
       end
 
       def write(text)
@@ -24,31 +26,40 @@ module IRC
 
           until words.empty?
             word = words.shift
-            @store[key][word].frequency += 1
+
+            if @stop_words.include?(word)
+              @store[key][word].frequency = 1
+            else
+              @store[key][word].frequency += 1
+            end
             key = word.downcase
           end
         end
       end
 
-      def stop?(tokens, words)
-        words.size > 50 || tokens.empty? || tokens.values.all?(&:visit)
+      def frequent_tokens(tokens)
+        max_frequency = tokens.values.max_by(&:frequency).frequency
+        tokens.select do |word, meta|
+          meta.frequency == max_frequency && !meta.visit
+        end
       end
 
       def generate(key)
         words = [key]
-        tokens = @store[key]
         metas = []
+        tokens = @store[key]
 
-        until stop?(tokens, words)
-          max_frequency = tokens.values.max_by(&:frequency).frequency
-          frequent_tokens = tokens.select { |word, meta| meta.frequency == max_frequency }
-          word = frequent_tokens.keys.sample
-          meta = frequent_tokens[word]
-          meta.visit = true
-          metas << meta
-          words << word
-          key = word.downcase
-          tokens = @store[key]
+        until words.size > 30 || tokens.empty?
+          tokens = frequent_tokens(tokens)
+          unless tokens.empty?
+            word = tokens.keys.sample
+            meta = tokens[word]
+            meta.visit = true
+            metas << meta
+            words << word
+            key = word.downcase
+            tokens = @store[key]
+          end
         end
 
         metas.each do |meta|
