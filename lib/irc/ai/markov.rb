@@ -4,6 +4,7 @@ module IRC
   module AI
     class Markov
       attr_reader :store
+      attr_accessor :corpus
 
       def initialize
         @store = Hash.new do |store, key|
@@ -16,6 +17,11 @@ module IRC
         end
 
         @stop_words = ['a', 'an', 'the', 'and', 'but']
+      end
+
+      def learn(file_path)
+        corpus = IO.read(file_path)
+        write(corpus)
       end
 
       def write(text)

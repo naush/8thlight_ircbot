@@ -17,6 +17,8 @@ module IRC
         @client.pong($1)
       when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: show me (.*)$/i
         show_me($1)
+      when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: read (.*)$/i
+        read_book($1)
       when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: weather for (.*)$/i
         weather_for($1)
       when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: reboot$/i
@@ -37,6 +39,16 @@ module IRC
         @client.message("Image not found.")
       else
         @client.message(messages.sample)
+      end
+    end
+
+    def read_book(title)
+      book_title = File.dirname(__FILE__) + '/ai/gutenberg/' + title.downcase
+p book_title
+      if File.exists?(book_title)
+        @ai.learn(book_title)
+      else
+        @client.message('Book not found.')
       end
     end
 
