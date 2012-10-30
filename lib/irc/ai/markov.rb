@@ -16,7 +16,7 @@ module IRC
           end
         end
 
-        @stop_words = ['a', 'an', 'the', 'and', 'but']
+        @stop_words = ['a', 'an', 'about', 'the', 'and', 'but']
       end
 
       def learn(file_path)
@@ -77,6 +77,7 @@ module IRC
 
       def read(text)
         tokens = text.gsub(/[^a-zA-Z0-9\-\s\']/, '').split
+        tokens.reject! { |token| @stop_words.include?(token) }
         sentences = tokens.collect do |token|
           key = token.downcase
           words = generate(key)
