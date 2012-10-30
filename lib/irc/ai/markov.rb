@@ -4,7 +4,6 @@ module IRC
   module AI
     class Markov
       attr_reader :store
-      attr_accessor :corpus
 
       def initialize
         @store = Hash.new do |store, key|
@@ -16,7 +15,8 @@ module IRC
           end
         end
 
-        @stop_words = ['a', 'an', 'about', 'the', 'and', 'but']
+        stop_words_file_path = File.dirname(__FILE__) + '/gutenberg/_stop_words.txt'
+        @stop_words = IO.read(stop_words_file_path).split("\n")
       end
 
       def learn(file_path)
@@ -34,7 +34,7 @@ module IRC
             word = words.shift
 
             if @stop_words.include?(word)
-              @store[key][word].frequency = 1
+              @store[key][word].frequency = 0
             else
               @store[key][word].frequency += 1
             end

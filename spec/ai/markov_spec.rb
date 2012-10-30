@@ -2,6 +2,10 @@ require_relative '../spec_helper'
 require_relative '../../lib/irc/ai/markov'
 
 describe IRC::AI::Markov do
+  before do
+    IO.stub(:read).and_return('a')
+  end
+
   it "writes one word" do
     ai = IRC::AI::Markov.new
     ai.write("one")
@@ -30,7 +34,7 @@ describe IRC::AI::Markov do
   it "writes five duplicate stop words" do
     ai = IRC::AI::Markov.new
     ai.write("a a a a")
-    ai.store["a"].values.first.frequency.should == 1
+    ai.store["a"].values.first.frequency.should == 0
   end
 
   it "writes word in lowercase" do

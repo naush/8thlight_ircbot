@@ -43,7 +43,8 @@ module IRC
     end
 
     def read_book(title)
-      book_title = File.dirname(__FILE__) + '/ai/gutenberg/' + title.gsub(/\s/, '_').downcase
+      book_title = File.dirname(__FILE__) + '/ai/gutenberg/' + title.gsub(/\s/, '_').downcase + '.txt'
+
       if File.exists?(book_title)
         @ai.learn(book_title)
         @client.message("I know #{title.capitalize}.")
