@@ -26,8 +26,7 @@ module IRC
         raise Exception
       when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: save$/i
         @ai.save_corpus
-      when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: load$/i
-        @ai.load_corpus
+        @client.message("Saved.")
       when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: what is the meaning of life(\?)?$/i
         @client.message("42.")
       when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: (.*)$/i
