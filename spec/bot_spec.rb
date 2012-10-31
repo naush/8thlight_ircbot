@@ -34,6 +34,7 @@ describe IRC::Bot do
       mock_client = mock("client", :channel => '8thlight', :nick => 'q')
       mock_ai = mock("ai")
       mock_ai.should_receive(:write).with('How are you?')
+      mock_ai.should_receive(:load_corpus)
       bot = IRC::Bot.new(mock_client, mock_ai)
       bot.respond(":naush!~naush@0.0.0.0 PRIVMSG #8thlight :How are you?")
     end
@@ -44,6 +45,7 @@ describe IRC::Bot do
       mock_ai = mock("ai")
       mock_ai.should_receive(:write).with('How are you?')
       mock_ai.should_receive(:read).and_return('Fine, thank you.')
+      mock_ai.should_receive(:load_corpus)
       bot = IRC::Bot.new(mock_client, mock_ai)
       bot.respond(":naush!~naush@0.0.0.0 PRIVMSG #8thlight :q: How are you?")
     end

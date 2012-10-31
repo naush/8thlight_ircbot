@@ -7,6 +7,7 @@ module IRC
     def initialize(client, ai = IRC::AI::Markov.new)
       @client = client
       @ai = ai
+      @ai.load_corpus
     end
 
     def respond(input)
@@ -23,6 +24,10 @@ module IRC
         weather_for($1)
       when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: reboot$/i
         raise Exception
+      when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: save$/i
+        @ai.save_corpus
+      when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: load$/i
+        @ai.load_corpus
       when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: what is the meaning of life(\?)?$/i
         @client.message("42.")
       when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: (.*)$/i
