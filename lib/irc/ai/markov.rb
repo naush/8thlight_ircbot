@@ -15,7 +15,7 @@ module IRC
           end
         end
 
-        stop_words_file_path = File.dirname(__FILE__) + '/gutenberg/_stop_words.txt'
+        stop_words_file_path = File.dirname(__FILE__) + '/txt/_stop_words'
         @stop_words = IO.read(stop_words_file_path).split("\n")
       end
 
