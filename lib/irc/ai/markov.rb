@@ -12,8 +12,8 @@ module IRC
         @store = Hash.new do |store, key|
           store[key] = Hash.new do |key, word|
             key[word] = {
-              :frequency => 0,
-              :visit => false
+              'frequency' => 0,
+              'visit' => false
             }
           end
         end
@@ -56,9 +56,9 @@ module IRC
             word = words.shift
 
             if @stop_words.include?(word)
-              @store[key][word][:frequency] = 0
+              @store[key][word]['frequency'] = 0
             else
-              @store[key][word][:frequency] += 1
+              @store[key][word]['frequency'] += 1
             end
             key = word.downcase
           end
@@ -66,9 +66,9 @@ module IRC
       end
 
       def frequent_tokens(tokens)
-        max_frequency = tokens.values.collect { |value| value[:frequency] }.max
+        max_frequency = tokens.values.collect { |value| value['frequency'] }.max
         tokens.select do |word, meta|
-          meta[:frequency] == max_frequency && !meta[:visit]
+          meta['frequency'] == max_frequency && !meta['visit']
         end
       end
 
@@ -82,7 +82,7 @@ module IRC
           unless tokens.empty?
             word = tokens.keys.sample
             meta = tokens[word]
-            meta[:visit] = true
+            meta['visit'] = true
             metas << meta
             words << word
             key = word.downcase
@@ -91,7 +91,7 @@ module IRC
         end
 
         metas.each do |meta|
-          meta[:visit] = false
+          meta['visit'] = false
         end
 
         return words

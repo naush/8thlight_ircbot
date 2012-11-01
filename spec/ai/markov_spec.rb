@@ -28,13 +28,13 @@ describe IRC::AI::Markov do
   it "writes five duplicate words" do
     ai = IRC::AI::Markov.new
     ai.write("cat cat cat cat cat")
-    ai.store["cat"].values.first[:frequency].should == 4
+    ai.store["cat"].values.first['frequency'].should == 4
   end
 
   it "writes five duplicate stop words" do
     ai = IRC::AI::Markov.new
     ai.write("a a a a")
-    ai.store["a"].values.first[:frequency].should == 0
+    ai.store["a"].values.first['frequency'].should == 0
   end
 
   it "writes word in lowercase" do
@@ -88,5 +88,13 @@ describe IRC::AI::Markov do
     ai = IRC::AI::Markov.new
     ai.write("one two three. one two three! one two four?")
     ai.read("one").should == "One two three."
+  end
+
+  it "loads corpus" do
+    ai = IRC::AI::Markov.new
+    File.should_receive(:exists?).and_return(true)
+    IO.should_receive(:read).and_return('{"back":{"to":{"frequency":0,"visit":false}},"to":{"work":{"frequency":1,"visit":false}}}')
+    ai.load_corpus
+    ai.store['back']['to'].should == { 'frequency' => 0, 'visit' => false }
   end
 end
