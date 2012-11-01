@@ -31,7 +31,12 @@ module IRC
         if File.exists?(CORPUS_FILE)
           corpus = IO.read(CORPUS_FILE)
           if corpus && !corpus.empty?
-            @store.merge!(JSON.parse(corpus))
+            backup_store = JSON.parse(corpus)
+            backup_store.each do |key, tokens|
+              tokens.each do |word, meta|
+                @store[key][word] = meta
+              end
+            end
           end
         end
       end
