@@ -28,9 +28,11 @@ module IRC
       end
 
       def load_corpus
-        corpus = IO.read(CORPUS_FILE)
-        if corpus && !corpus.empty?
-          @store.merge!(JSON.parse(corpus))
+        if File.exists?(CORPUS_FILE)
+          corpus = IO.read(CORPUS_FILE)
+          if corpus && !corpus.empty?
+            @store.merge!(JSON.parse(corpus))
+          end
         end
       end
 
