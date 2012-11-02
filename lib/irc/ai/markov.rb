@@ -12,8 +12,7 @@ module IRC
         @store = Hash.new do |store, key|
           store[key] = Hash.new do |key, word|
             key[word] = {
-              'frequency' => 0,
-              'visit' => false
+              'frequency' => 0
             }
           end
         end
@@ -91,7 +90,7 @@ module IRC
         end
 
         metas.each do |meta|
-          meta['visit'] = false
+          meta.delete('visit')
         end
 
         return words
