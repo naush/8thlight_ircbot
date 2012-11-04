@@ -1,71 +1,65 @@
-require_relative 'api/google_image'
-require_relative 'api/wunderground'
-require_relative 'ai/markov'
-
 module IRC
   class Bot
-    def initialize(client, ai = IRC::AI::Markov.new)
+    attr_accessor :features
+
+    def initialize(client, ai)
       @client = client
       @ai = ai
       @ai.load_corpus
+      @features = []
+    end
+
+    def install_feature(feature)
+      @features << feature
     end
 
     def respond(input)
       puts "> #{input}"
+      input = input.strip
 
-      case input.strip
-      when /^.*PING :(.+)$/i
-        @client.pong($1)
-      when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: show me (.*)$/i
-        show_me($1)
-      when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: read (.*)$/i
-        read_book($1)
-      when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: weather for (.*)$/i
-        weather_for($1)
-      when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: reboot$/i
+      if input =~ /^.*PING :(.+)$/i
+        respond_to_ping($1)
+      elsif reboot?(input)
         raise Exception
-      when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: save$/i
+      elsif input =~ /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: save$/i
         @ai.save_corpus
         @client.message("Saved.")
-      when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: what is the meaning of life(\?)?$/i
-        @client.message("42.")
-      when /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: (.*)$/i
-        @client.message(@ai.read($1))
+      elsif matching_feature(input)
+        execute_matching_feature(input)
+      elsif input =~ /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: (.*)$/i
+        reply([@ai.read($1)])
         @ai.write($1)
-      when /^.*PRIVMSG ##{@client.channel} :(.*)$/i
+      elsif input =~ /^.*PRIVMSG ##{@client.channel} :(.*)$/i
         @ai.write($1)
       end
     end
 
-    def show_me(search_terms)
-      messages = IRC::API::GoogleImage.query(search_terms)
-      if messages.empty?
-        @client.message("Image not found.")
-      else
-        @client.message(messages.sample)
+    private
+
+    def execute_matching_feature(input)
+      feature = matching_feature(input)
+      if feature
+        input =~ /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: #{feature.keyword} (.*)$/i
+        reply(feature.generate_reply($1))
       end
     end
 
-    def read_book(title)
-      book_title = File.dirname(__FILE__) + '/ai/txt/' + title.gsub(/\s/, '_').downcase
-
-      if File.exists?(book_title)
-        @ai.learn(book_title)
-        @client.message("I know #{title.capitalize}.")
-      else
-        @client.message('Book not found.')
+    def matching_feature(input)
+      @features.find do |feature|
+        (input =~ /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: #{feature.keyword} (.*)$/i) 
       end
     end
 
-    def weather_for(search_terms)
-      messages = IRC::API::Wunderground.query(search_terms)
-      if messages.empty?
-        @client.message("City not found.")
-      else
-        messages.each do |message|
-          @client.message(message)
-        end
-      end
+    def reboot?(input)
+      input =~ /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: reboot$/i
+    end
+
+    def respond_to_ping(address)
+      @client.pong(address)
+    end
+
+    def reply(messages)
+      messages.each { |message| @client.message message }
     end
   end
 end
