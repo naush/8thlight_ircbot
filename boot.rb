@@ -1,5 +1,5 @@
 if ARGV.size != 5
-  puts "USAGE: ruby boost.rb <nick> <server> <port> <channel> <password>"
+  puts "USAGE: ruby boot.rb <nick> <server> <port> <channel> <password>"
   exit
 end
 nick, server, port, channel, password = ARGV
