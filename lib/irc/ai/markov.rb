@@ -109,7 +109,7 @@ module IRC
         end.compact
 
         if sentences.empty?
-          return ["I beg your pardon?", "Excuse me?", "What did you call me?"].sample
+          return ["I beg your pardon?", "Excuse me?", "What did you call me?", "What did you say to me??"].sample
         else
           return sentences.sample
         end
