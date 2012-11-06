@@ -11,9 +11,7 @@ module IRC
       def initialize
         @store = Hash.new do |store, key|
           store[key] = Hash.new do |key, word|
-            key[word] = {
-              'frequency' => 0
-            }
+            key[word] = 0
           end
         end
 
@@ -55,42 +53,24 @@ module IRC
             word = words.shift
 
             if @stop_words.include?(word)
-              @store[key][word]['frequency'] = 0
+              @store[key][word] = 0
             else
-              @store[key][word]['frequency'] += 1
+              @store[key][word] += 1
             end
             key = word.downcase
           end
         end
       end
 
-      def frequent_tokens(tokens)
-        max_frequency = tokens.values.collect { |value| value['frequency'] }.max
-        tokens.select do |word, meta|
-          meta['frequency'] == max_frequency && !meta['visit']
-        end
-      end
-
       def generate(key)
         words = [key]
-        metas = []
         tokens = @store[key]
 
         until words.size > 30 || tokens.empty?
-          tokens = frequent_tokens(tokens)
-          unless tokens.empty?
-            word = tokens.keys.sample
-            meta = tokens[word]
-            meta['visit'] = true
-            metas << meta
-            words << word
-            key = word.downcase
-            tokens = @store[key]
-          end
-        end
-
-        metas.each do |meta|
-          meta.delete('visit')
+          word = tokens.max_by(&:last).first.downcase
+          break if words.include?(word)
+          words << word
+          tokens = @store[word]
         end
 
         return words
@@ -106,10 +86,10 @@ module IRC
             sentence = words.join(" ")
             format(sentence)
           end
-        end.compact
+        end
 
         if sentences.empty?
-          return ["I beg your pardon?", "Excuse me?", "What did you call me?", "What did you say to me??"].sample
+          return ["I beg your pardon?", "Excuse me?", "What did you call me?", "What did you say to me?"].sample
         else
           return sentences.sample
         end
