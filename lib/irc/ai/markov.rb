@@ -68,9 +68,12 @@ module IRC
 
         until words.size > 30 || tokens.empty?
           word = tokens.max_by(&:last).first.downcase
-          break if words.include?(word)
-          words << word
-          tokens = @store[word]
+          if words.include?(word)
+            tokens.delete(word)
+          else
+            words << word
+            tokens = @store[word]
+          end
         end
 
         return words
