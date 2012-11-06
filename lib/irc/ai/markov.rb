@@ -89,7 +89,7 @@ module IRC
             sentence = words.join(" ")
             format(sentence)
           end
-        end
+        end.compact
 
         if sentences.empty?
           return ["I beg your pardon?", "Excuse me?", "What did you call me?", "What did you say to me?"].sample
