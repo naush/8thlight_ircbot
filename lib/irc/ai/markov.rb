@@ -67,7 +67,8 @@ module IRC
         tokens = @store[key]
 
         until words.size > 30 || tokens.empty?
-          word = tokens.max_by(&:last).first
+          max = tokens.collect(&:last).max
+          word = tokens.group_by(&:last)[max].sample.first
           if words.include?(word)
             tokens.delete(word)
           else
