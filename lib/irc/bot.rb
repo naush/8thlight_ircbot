@@ -9,7 +9,6 @@ module IRC
       @features = []
     end
 
-
     def install_feature(feature)
       @features << feature
     end

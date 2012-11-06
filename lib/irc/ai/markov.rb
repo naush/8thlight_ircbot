@@ -80,9 +80,20 @@ module IRC
       end
 
       def read(text)
+        tokens = parse_input_text_into_tokens(text)
+        sentences = find_matching_sentences(tokens)
+        sentences.empty? ? confused_phrase : sentences.sample
+      end
+
+      private
+
+      def parse_input_text_into_tokens(text)
         tokens = text.gsub(/[^a-zA-Z0-9\-\s\']/, '').split
-        tokens.reject! { |token| @stop_words.include?(token) }
-        sentences = tokens.collect do |token|
+        tokens.reject { |token| @stop_words.include?(token) }
+      end
+
+      def find_matching_sentences(tokens)
+        tokens.collect do |token|
           key = token.downcase
           words = generate(key)
           if words.size > 1
@@ -90,12 +101,10 @@ module IRC
             format(sentence)
           end
         end.compact
+      end
 
-        if sentences.empty?
-          return ["I beg your pardon?", "Excuse me?", "What did you call me?", "What did you say to me?"].sample
-        else
-          return sentences.sample
-        end
+      def confused_phrase
+        ["I beg your pardon?", "Excuse me?", "What did you call me?", "What did you say to me?"].sample
       end
 
       def format(sentence)
