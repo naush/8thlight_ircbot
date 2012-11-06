@@ -9,8 +9,8 @@ describe IRC::BotFeatures::BookReader do
 
   let (:feature) { described_class.new(MockAi.new) }
 
-  it 'keyword is "read"' do
-    feature.keyword.should == 'read'
+  it 'keyword expression is "read (.*)$"' do
+    feature.keyword_expression.should == 'read (.*)$'
   end
 
   it 'knows books' do

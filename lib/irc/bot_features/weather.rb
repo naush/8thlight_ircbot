@@ -3,8 +3,8 @@ require_relative '../api/wunderground'
 module IRC
   module BotFeatures
     class Weather
-      def keyword
-        'weather for'
+      def keyword_expression
+        'weather for (.*)$'
       end
 
       def generate_reply(input)

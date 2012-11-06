@@ -4,8 +4,8 @@ require_relative '../../lib/irc/bot_features/weather'
 describe IRC::BotFeatures::Weather do
   let(:feature) { described_class.new }
 
-  it 'keyword is "weather for"' do
-    feature.keyword.should == 'weather for'
+  it 'keyword_expression is "weather for"' do
+    feature.keyword_expression.should == 'weather for (.*)$'
   end
 
   it 'returns a not found message if query returns no results' do

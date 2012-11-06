@@ -9,6 +9,7 @@ module IRC
       @features = []
     end
 
+
     def install_feature(feature)
       @features << feature
     end
@@ -21,12 +22,12 @@ module IRC
         respond_to_ping($1)
       elsif reboot?(input)
         raise Exception
-      elsif input =~ /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: save$/i
+      elsif input =~ direct_message_regex("save$")
         @ai.save_corpus
-        @client.message("Saved.")
+        reply(["Saved."])
       elsif matching_feature(input)
         execute_matching_feature(input)
-      elsif input =~ /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: (.*)$/i
+      elsif input =~ direct_message_regex("(.*)$")
         reply([@ai.read($1)])
         @ai.write($1)
       elsif input =~ /^.*PRIVMSG ##{@client.channel} :(.*)$/i
@@ -39,23 +40,31 @@ module IRC
     def execute_matching_feature(input)
       feature = matching_feature(input)
       if feature
-        input =~ /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: #{feature.keyword} (.*)$/i
+        input =~ direct_message_regex("#{feature.keyword_expression}")
         reply(feature.generate_reply($1))
       end
     end
 
     def matching_feature(input)
       @features.find do |feature|
-        (input =~ /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: #{feature.keyword} (.*)$/i) 
+        (input =~ direct_message_regex("#{feature.keyword_expression}"))
       end
     end
 
     def reboot?(input)
-      input =~ /^.*PRIVMSG ##{@client.channel} :#{@client.nick}: reboot$/i
+      input =~ direct_message_regex("reboot$")
     end
 
     def respond_to_ping(address)
       @client.pong(address)
+    end
+
+    def direct_message_regex(user_input)
+      Regexp.new(direct_message_regex_prefix + user_input)
+    end
+
+    def direct_message_regex_prefix
+      "^.*PRIVMSG ##{@client.channel} :#{@client.nick}: "
     end
 
     def reply(messages)

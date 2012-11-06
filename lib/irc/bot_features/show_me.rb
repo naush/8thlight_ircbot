@@ -3,8 +3,8 @@ require_relative '../api/google_image'
 module IRC
   module BotFeatures
     class ShowMe
-      def keyword
-        "show me"
+      def keyword_expression
+        "show me (.*)$"
       end
 
       def generate_reply(input)

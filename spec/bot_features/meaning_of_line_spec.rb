@@ -5,8 +5,8 @@ require_relative '../../lib/irc/bot_features/meaning_of_life'
 describe IRC::BotFeatures::MeaningOfLife do
   let(:feature) { described_class.new }
 
-  it 'keyword is "what is the meaning of life"' do
-    feature.keyword.should == 'what is the meaning of life'
+  it 'keyword expression is "what is the meaning of life\??$"' do
+    feature.keyword_expression.should == 'what is the meaning of life\??$'
   end
 
   it 'is 42' do

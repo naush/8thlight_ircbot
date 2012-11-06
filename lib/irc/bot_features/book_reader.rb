@@ -5,8 +5,8 @@ module IRC
         @ai = ai
       end
 
-      def keyword
-        'read'
+      def keyword_expression
+        'read (.*)$'
       end
 
       def generate_reply(input)

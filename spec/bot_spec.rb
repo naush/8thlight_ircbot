@@ -7,8 +7,8 @@ describe IRC::Bot do
   let(:bot) { IRC::Bot.new(mock_client, mock_ai) }
 
   class MockFeature
-    def keyword
-      "mock"
+    def keyword_expression
+      "mock (.*)$"
     end
 
     def generate_reply(input)
@@ -75,7 +75,7 @@ describe IRC::Bot do
   context 'features' do
     it 'installs features' do
       bot.features = []
-      feature = stub(keyword: "stub", generate_reply: "stub reply")
+      feature = stub(keyword_expression: "stub", generate_reply: "stub reply")
       bot.install_feature(feature)
 
       bot.features.should == [feature]

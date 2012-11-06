@@ -4,8 +4,8 @@ require_relative '../../lib/irc/bot_features/show_me'
 describe IRC::BotFeatures::ShowMe do
   let(:feature) { described_class.new }
 
-  it 'keyword is "show me"' do
-    feature.keyword.should == "show me"
+  it 'keyword_expression is "show me (.*)$ "' do
+    feature.keyword_expression.should == "show me (.*)$"
   end
 
   it 'returns a not found message if no query results' do
