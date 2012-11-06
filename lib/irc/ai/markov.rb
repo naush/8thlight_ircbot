@@ -3,6 +3,7 @@ require 'json'
 module IRC
   module AI
     class Markov
+      attr_accessor :stop_words
       attr_reader :store
 
       CORPUS_FILE = File.dirname(__FILE__) + '/txt/_corpus'
@@ -50,14 +51,13 @@ module IRC
           key = words.shift.downcase unless words.empty?
 
           until words.empty?
-            word = words.shift
-
+            word = words.shift.downcase
             if @stop_words.include?(word)
               @store[key][word] = 0
             else
               @store[key][word] += 1
             end
-            key = word.downcase
+            key = word
           end
         end
       end
@@ -67,7 +67,7 @@ module IRC
         tokens = @store[key]
 
         until words.size > 30 || tokens.empty?
-          word = tokens.max_by(&:last).first.downcase
+          word = tokens.max_by(&:last).first
           if words.include?(word)
             tokens.delete(word)
           else

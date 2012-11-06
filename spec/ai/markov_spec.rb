@@ -69,6 +69,12 @@ describe IRC::AI::Markov do
     ai.read("one").should == "One two."
   end
 
+  it "avoids a loop with capitalized keys" do
+    ai = IRC::AI::Markov.new
+    ai.write("I thought I")
+    ai.read("I").should == "I thought."
+  end
+
   it "recognizes sentences" do
     ai = IRC::AI::Markov.new
     ai.write("one two three. four.")
