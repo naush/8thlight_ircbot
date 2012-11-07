@@ -70,7 +70,6 @@ module IRC
 
       def read(text)
         words = text.downcase.gsub(/[^a-z0-9\-\s\']/, '').split
-        words.reject! { |token| stop_words.include?(token) }
         sentences = []
 
         if words.size > 1
