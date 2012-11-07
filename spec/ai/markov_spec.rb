@@ -21,64 +21,58 @@ describe IRC::AI::Markov do
   it "writes three words" do
     ai = IRC::AI::Markov.new
     ai.write("one two three")
-    ai.store["one"].keys.should == ["two"]
-    ai.store["two"].keys.should == ["three"]
+    ai.store["one two"].keys.should == ["three"]
   end
 
   it "writes five duplicate words" do
     ai = IRC::AI::Markov.new
     ai.write("cat cat cat cat cat")
-    ai.store["cat"].values.first.should == 4
+    ai.store["cat cat"].values.first.should == 3
   end
 
-  it "writes five duplicate stop words" do
+  it "assigns zero frequency to stop words" do
     ai = IRC::AI::Markov.new
-    ai.write("a a a a")
-    ai.store["a"].values.first.should == 0
+    ai.stop_words = ['i', 'thought']
+    ai.write("I thought I")
+    ai.store['i thought'].values.first.should == 0
   end
 
   it "writes word in lowercase" do
     ai = IRC::AI::Markov.new
-    ai.write("One two")
-    ai.store["one"].keys.should == ["two"]
-  end
-
-  it "reads one word" do
-    ai = IRC::AI::Markov.new
     ai.write("One two three")
-    ai.read("one").should == "One two three."
+    ai.store["one two"].keys.should == ["three"]
   end
 
   it "reads two words" do
     ai = IRC::AI::Markov.new
     ai.write("one two three")
     ai.write("two three four")
-    ai.read("one").should == "One two three four."
+    ai.read("one two").should == "One two three four."
   end
 
   it "reads a sentence" do
     ai = IRC::AI::Markov.new
     ai.write("I have a book")
     ai.write("a book about Alchemy")
-    ai.read("I").should == "I have a book about alchemy."
+    ai.read("I have").should == "I have a book about alchemy."
   end
 
   it "avoids a loop" do
     ai = IRC::AI::Markov.new
     ai.write("one two one")
-    ai.read("one").should == "One two."
+    ai.read("one two").should == "One two."
   end
 
   it "avoids a loop with capitalized keys" do
     ai = IRC::AI::Markov.new
     ai.write("I thought I")
-    ai.read("I").should == "I thought."
+    ai.read("I thought").should == "I thought."
   end
 
   it "recognizes sentences" do
     ai = IRC::AI::Markov.new
-    ai.write("one two three. four.")
-    sentence = ai.read("one")
-    ["One two three.", "Four."].should include(sentence)
+    ai.write("one two three. one two four.")
+    sentence = ai.read("one two")
+    ["One two three.", "One two four."].should include(sentence)
   end
 end

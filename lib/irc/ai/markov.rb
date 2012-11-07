@@ -21,7 +21,7 @@ module IRC
 
       def save_corpus
         File.open(CORPUS_FILE, 'w') do |file|
-          file.puts(@store.to_json)
+          file.puts(store.to_json)
         end
       end
 
@@ -32,7 +32,7 @@ module IRC
             backup_store = JSON.parse(corpus)
             backup_store.each do |key, tokens|
               tokens.each do |word, meta|
-                @store[key][word] = meta
+                store[key][word] = meta
               end
             end
           end
@@ -47,65 +47,85 @@ module IRC
       def write(text)
         sentences = text.split(/\.|\!|\?/)
         sentences.each do |sentence|
-          words = sentence.gsub(/[^a-zA-Z0-9\-\s\']/, '').split
-          key = words.shift.downcase unless words.empty?
+          words = sentence.downcase.gsub(/[^a-z0-9\-\s\']/, '').split
 
-          until words.empty?
-            word = words.shift.downcase
-            if @stop_words.include?(word)
-              @store[key][word] = 0
-            else
-              @store[key][word] += 1
+          if words.size > 2
+            first = words.shift
+            second = words.shift
+
+            until words.empty?
+              key = [first, second].join(' ')
+              third = words.shift
+              if stop_words.include?(third)
+                store[key][third] = 0
+              else
+                store[key][third] += 1
+              end
+              first = second
+              second = third
             end
-            key = word
           end
         end
       end
 
-      def generate(key)
-        words = [key]
-        tokens = @store[key]
+      def read(text)
+        words = text.downcase.gsub(/[^a-z0-9\-\s\']/, '').split
+        words.reject! { |token| stop_words.include?(token) }
+        sentences = []
+
+        if words.size > 1
+          first = words.shift
+
+          until words.empty?
+            second = words.shift
+            sentence = generate(first, second).join(' ')
+            sentences << format(sentence)
+            first = second
+          end
+        end
+
+        if sentences.empty?
+          return confused_phrases.sample
+        else
+          return sentences.sample
+        end
+      end
+
+      def generate(first, second)
+        words = [first, second]
+        key = [first, second].join(' ')
+        tokens = store[key]
 
         until words.size > 30 || tokens.empty?
-          max = tokens.collect(&:last).max
-          word = tokens.group_by(&:last)[max].sample.first
-          if words.include?(word)
-            tokens.delete(word)
+          first = second
+          second = frequent_tokens(tokens).sample
+
+          if words.include?(second)
+            tokens.delete(second)
           else
-            words << word
-            tokens = @store[word]
+            words << second
+            key = [first, second].join(' ')
+            tokens = store[key]
           end
         end
 
         return words
       end
 
-      def read(text)
-        tokens = parse_input_text_into_tokens(text)
-        sentences = find_matching_sentences(tokens)
-        sentences.empty? ? confused_phrase : sentences.sample
+      def frequent_tokens(tokens)
+        max = tokens.collect(&:last).max
+        tokens.group_by(&:last)[max].collect(&:first)
       end
 
       private
 
-      def parse_input_text_into_tokens(text)
-        tokens = text.gsub(/[^a-zA-Z0-9\-\s\']/, '').split
-        tokens.reject { |token| @stop_words.include?(token) }
-      end
-
-      def find_matching_sentences(tokens)
-        tokens.collect do |token|
-          key = token.downcase
-          words = generate(key)
-          if words.size > 1
-            sentence = words.join(" ")
-            format(sentence)
-          end
-        end.compact
-      end
-
-      def confused_phrase
-        ["I beg your pardon?", "Excuse me?", "What did you call me?", "What did you say to me?"].sample
+      def confused_phrases
+        [
+          "I beg your pardon?",
+          "Excuse me?",
+          "What did you call me?",
+          "What did you say to me?"
+        ]
       end
 
       def format(sentence)
