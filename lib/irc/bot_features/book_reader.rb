@@ -10,7 +10,7 @@ module IRC
       end
 
       def generate_reply(input)
-        book_title = File.dirname(__FILE__) + '/../ai/txt/' + input.gsub(/\s/, '_').downcase
+        book_title = File.dirname(__FILE__) + '/../ai/corpus/' + input.gsub(/\s/, '_').downcase
 
         if File.exists?(book_title)
           @ai.learn(book_title)

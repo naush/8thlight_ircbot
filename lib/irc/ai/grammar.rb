@@ -10,7 +10,22 @@ module IRC
         'whom',
         'whose',
         'why',
-        'how'
+        'how',
+        'should',
+        'shouldn\'t',
+        'can',
+        'can\'t',
+        'do',
+        'don\'t',
+        'does',
+        'doesn\'t',
+        'have',
+        'haven\'t',
+        'am',
+        'are',
+        'aren\'t',
+        'is',
+        'isn\'t'
       ]
 
       def self.format(sentence)

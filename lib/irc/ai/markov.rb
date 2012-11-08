@@ -7,8 +7,8 @@ module IRC
       attr_accessor :stop_words
       attr_reader :store
 
-      CORPUS_FILE = File.dirname(__FILE__) + '/txt/_corpus'
-      STOP_WORDS_FILE = File.dirname(__FILE__) + '/txt/_stop_words'
+      CORPUS_FILE = File.dirname(__FILE__) + '/corpus/_corpus'
+      STOP_WORDS_FILE = File.dirname(__FILE__) + '/corpus/_stop_words'
 
       def initialize
         @store = Hash.new do |store, key|
