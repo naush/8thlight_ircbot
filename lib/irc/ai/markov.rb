@@ -50,19 +50,19 @@ module IRC
           words = sentence.downcase.gsub(/[^a-z0-9\-\s\']/, '').split
 
           if words.size > 2
-            first = words.shift
-            second = words.shift
+            first_word = words.shift
+            second_word = words.shift
 
             until words.empty?
-              key = [first, second].join(' ')
+              key = [first_word, second_word].join(' ')
               third = words.shift
               if stop_words.include?(third)
                 store[key][third] = 0
               else
                 store[key][third] += 1
               end
-              first = second
-              second = third
+              first_word = second_word
+              second_word = third
             end
           end
         end
@@ -73,13 +73,13 @@ module IRC
         sentences = []
 
         if words.size > 1
-          first = words.shift
+          first_word = words.shift
 
           until words.empty?
-            second = words.shift
-            sentence = generate(first, second).join(' ')
+            second_word = words.shift
+            sentence = generate(first_word, second_word).join(' ')
             sentences << format(sentence)
-            first = second
+            first_word = second_word
           end
         end
 
@@ -90,20 +90,20 @@ module IRC
         end
       end
 
-      def generate(first, second)
-        words = [first, second]
-        key = [first, second].join(' ')
+      def generate(first_word, second_word)
+        words = [first_word, second_word]
+        key = words.join(' ')
         tokens = store[key]
 
-        until words.size > 30 || tokens.empty?
-          first = second
-          second = frequent_tokens(tokens).sample
+        until tokens.empty?
+          first_word = second_word
+          second_word = random_word(tokens)
 
-          if words.include?(second)
-            tokens.delete(second)
+          if words.include?(second_word)
+            tokens.delete(second_word)
           else
-            words << second
-            key = [first, second].join(' ')
+            words << second_word
+            key = [first_word, second_word].join(' ')
             tokens = store[key]
           end
         end
@@ -111,12 +111,11 @@ module IRC
         return words
       end
 
-      def frequent_tokens(tokens)
-        max = tokens.collect(&:last).max
-        tokens.group_by(&:last)[max].collect(&:first)
-      end
-
       private
+
+      def randome_word(tokens)
+        tokens.group_by(&:last).max_by(&:first_word).last.collect(&:first_word).sample
+      end
 
       def confused_phrases
         [
