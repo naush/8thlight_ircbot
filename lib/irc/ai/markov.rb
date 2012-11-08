@@ -1,4 +1,5 @@
 require 'json'
+require_relative 'grammar'
 
 module IRC
   module AI
@@ -78,7 +79,7 @@ module IRC
           until words.empty?
             second_word = words.shift
             sentence = generate(first_word, second_word).join(' ')
-            sentences << format(sentence)
+            sentences << Grammar.format(sentence)
             first_word = second_word
           end
         end
@@ -113,8 +114,8 @@ module IRC
 
       private
 
-      def randome_word(tokens)
-        tokens.group_by(&:last).max_by(&:first_word).last.collect(&:first_word).sample
+      def random_word(tokens)
+        tokens.group_by(&:last).max_by(&:first).last.collect(&:first).sample
       end
 
       def confused_phrases
@@ -124,10 +125,6 @@ module IRC
           "What did you call me?",
           "What did you say to me?"
         ]
-      end
-
-      def format(sentence)
-        sentence[0].capitalize + sentence[1..-1] + '.'
       end
     end
   end
