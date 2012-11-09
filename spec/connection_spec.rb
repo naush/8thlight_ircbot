@@ -4,6 +4,10 @@ require_relative '../lib/irc/connection'
 describe IRC::Connection do
 
   context "start" do
+    before do
+      IRC::Connection.any_instance.stub(:puts)
+    end
+
     it "quits when server responds with nothing" do
       mock_socket = mock("socket", :gets => nil)
       mock_client = mock("client", :socket => mock_socket)
@@ -19,7 +23,9 @@ describe IRC::Connection do
       mock_socket.should_receive(:gets).and_return(nil)
       mock_client = mock("client", :socket => mock_socket)
       mock_bot = mock("bot")
-      mock_bot.should_receive(:respond).with('PRIVMSG ME')
+      mock_message = mock("message")
+      IRC::Message.should_receive(:parse).with('PRIVMSG ME').and_return(mock_message)
+      mock_bot.should_receive(:respond).with(mock_message)
 
       IRC::Connection.should_receive(:select).with([mock_socket]).and_return([[mock_socket]])
       IRC::BotFactory.should_receive(:assemble_bot).with(mock_client).and_return(mock_bot)

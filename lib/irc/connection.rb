@@ -1,5 +1,6 @@
 require 'json'
 require_relative 'bot_factory'
+require_relative 'message'
 
 module IRC
   class Connection
@@ -11,7 +12,9 @@ module IRC
           socket = ready.first
           input = client.socket.gets
           return unless input
-          bot.respond(input)
+
+          puts input
+          bot.respond(IRC::Message.parse(input))
         end
       end
     end
