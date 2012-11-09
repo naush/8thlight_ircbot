@@ -120,10 +120,10 @@ module IRC
 
       def confused_phrases
         [
-          "I beg your pardon?",
-          "Excuse me?",
-          "What did you call me?",
-          "What did you say to me?"
+          "You don't know?",
+          "What did you say to me?",
+          'opp',
+          'WAT'
         ]
       end
     end
