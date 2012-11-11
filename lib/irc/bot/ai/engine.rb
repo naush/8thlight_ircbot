@@ -5,7 +5,7 @@ require_relative 'grammar'
 module IRC
   module Bot
     module AI
-      class Markov
+      class Engine
         attr_accessor :stop_words
         attr_accessor :persona
         attr_reader :store
@@ -76,14 +76,13 @@ module IRC
           words = text.downcase.gsub(/[^a-z0-9\-\s\']/, '').split
           sentences = []
 
-          if words.size > 1
-            first_word = words.shift
-
-            until words.empty?
-              second_word = words.shift
-              sentence = generate(first_word, second_word).join(' ')
-              sentences << Grammar.format(sentence)
-              first_word = second_word
+          until words.empty?
+            word = words.shift
+            store.keys.each do |key|
+              if key.include?(word)
+                sentence = generate(key).join(' ')
+                sentences << Grammar.format(sentence)
+              end
             end
           end
 
@@ -94,9 +93,9 @@ module IRC
           end
         end
 
-        def generate(first_word, second_word)
+        def generate(key)
+          first_word, second_word = key.split(' ')
           words = [first_word, second_word]
-          key = words.join(' ')
           tokens = store[key]
 
           until tokens.empty?

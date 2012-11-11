@@ -1,8 +1,8 @@
 require 'spec_helper'
-require 'irc/bot/ai/markov'
+require 'irc/bot/ai/engine'
 
-describe IRC::Bot::AI::Markov do
-  let(:ai) { IRC::Bot::AI::Markov.new }
+describe IRC::Bot::AI::Engine do
+  let(:ai) { IRC::Bot::AI::Engine.new }
 
   it "writes one word" do
     ai.write("one")
@@ -35,21 +35,27 @@ describe IRC::Bot::AI::Markov do
     ai.store["one two"].keys.should == ["three"]
   end
 
+  it "reads one word" do
+    ai.write("one two three")
+    ai.write("two three four")
+    ai.read("one").should == "One two three four."
+  end
+
   it "reads two words" do
     ai.write("one two three")
     ai.write("two three four")
-    ai.read("one two").should == "One two three four."
+    ["One two three four.", "Two three four."].should include(ai.read("one two"))
   end
 
   it "reads a sentence" do
     ai.write("I have a book")
     ai.write("a book about Alchemy")
-    ai.read("I have").should == "I have a book about alchemy."
+    ai.read("I").should == "I have a book about alchemy."
   end
 
   it "avoids a loop" do
     ai.write("one two one")
-    ai.read("one two").should == "One two."
+    ai.read("one").should == "One two."
   end
 
   it "avoids a loop with capitalized keys" do
@@ -60,7 +66,7 @@ describe IRC::Bot::AI::Markov do
   it "recognizes sentences" do
     ai.write("one two three. one two four.")
     sentence = ai.read("one two")
-    ["One two three.", "One two four."].should include(sentence)
+    ["One two three.", "One two four.", "Two three.", "Two four."].should include(sentence)
   end
 
   it "changes persona" do

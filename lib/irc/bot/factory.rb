@@ -1,4 +1,4 @@
-require_relative 'ai/markov'
+require_relative 'ai/engine'
 require_relative 'prototype'
 require_relative 'features/book_reader'
 require_relative 'features/conversation'
@@ -16,7 +16,7 @@ module IRC
   module Bot
     class Factory
       def self.assemble_bot(client)
-        ai = IRC::Bot::AI::Markov.new
+        ai = IRC::Bot::AI::Engine.new
         bot = IRC::Bot::Prototype.new(client, ai)
         nick = client.nick
 
