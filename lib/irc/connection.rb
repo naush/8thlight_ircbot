@@ -1,10 +1,10 @@
 require 'json'
-require_relative 'bot_factory'
+require_relative 'bot/factory'
 
 module IRC
   class Connection
     def self.start(client, stdin = $stdin)
-      bot = IRC::BotFactory.assemble_bot(client)
+      bot = IRC::Bot::Factory.assemble_bot(client)
 
       while true
         if ready = select([client.socket])
