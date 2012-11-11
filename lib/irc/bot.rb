@@ -16,8 +16,6 @@ module IRC
     def respond(input)
       if input =~ /^.*PING :(.+)$/i
         @client.pong($1)
-      elsif input =~ /^.*PRIVMSG ##{@client.nick}: reboot$/i
-        raise Exception
       else
         @features.each do |feature|
           result = input =~ Regexp.new(feature.keyword_expression)

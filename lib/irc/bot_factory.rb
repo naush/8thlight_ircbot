@@ -4,6 +4,7 @@ require_relative 'bot_features/book_reader'
 require_relative 'bot_features/conversation'
 require_relative 'bot_features/default'
 require_relative 'bot_features/meaning_of_life'
+require_relative 'bot_features/reboot'
 require_relative 'bot_features/save'
 require_relative 'bot_features/show_me'
 require_relative 'bot_features/spy'
@@ -16,6 +17,7 @@ module IRC
       bot = IRC::Bot.new(client, ai)
       nick = client.nick
 
+      bot.install_feature(IRC::BotFeatures::Reboot.new(nick))
       bot.install_feature(IRC::BotFeatures::MeaningOfLife.new(nick))
       bot.install_feature(IRC::BotFeatures::BookReader.new(ai, nick))
       bot.install_feature(IRC::BotFeatures::ShowMe.new(nick))
