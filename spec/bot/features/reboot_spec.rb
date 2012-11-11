@@ -13,4 +13,3 @@ describe IRC::Bot::Features::Reboot do
     expect { feature.generate_reply("blah") }.to raise_error
   end
 end
-

@@ -7,6 +7,7 @@ module IRC
     module AI
       class Markov
         attr_accessor :stop_words
+        attr_accessor :persona
         attr_reader :store
 
         STORE_FILE = File.dirname(__FILE__) + '/corpus/_store'
@@ -19,6 +20,7 @@ module IRC
           end
 
           @stop_words ||= YAML.load_file(File.dirname(__FILE__) + '/resources/stop_words.yml')
+          @persona ||= YAML.load_file(File.dirname(__FILE__) + '/personas/skim.yml')
         end
 
         def save_corpus
@@ -110,7 +112,7 @@ module IRC
             end
           end
 
-          return words
+          words
         end
 
         private
@@ -120,12 +122,7 @@ module IRC
         end
 
         def confused_phrases
-          [
-            "You don't know?",
-            "What did you say to me?",
-            'opp',
-            'WAT'
-          ]
+          @persona['confused_phrases']
         end
       end
     end
