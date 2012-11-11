@@ -14,15 +14,11 @@ module IRC
     end
 
     def respond(input)
-      if input =~ /^.*PING :(.+)$/i
-        @client.pong($1)
-      else
-        @features.each do |feature|
-          result = input =~ Regexp.new(feature.keyword_expression)
-          if result == 0
-            reply(feature.generate_reply($1))
-            break
-          end
+      @features.each do |feature|
+        result = input =~ Regexp.new(feature.keyword_expression)
+        if result == 0
+          reply(feature.generate_reply($1))
+          break
         end
       end
     end
