@@ -13,7 +13,7 @@ module IRC
           input = client.socket.gets
           return unless input
 
-          puts input
+          puts "> #{input}"
           bot.respond(IRC::Message.parse(input))
         end
       end

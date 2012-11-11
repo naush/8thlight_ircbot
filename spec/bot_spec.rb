@@ -17,7 +17,6 @@ describe IRC::Bot do
   end
 
   context "self.respond" do
-
     it "pong" do
       message = {type: :ping, recipient: nil, content: 'irc.example.net'}
       mock_client.should_receive(:pong).with("irc.example.net")

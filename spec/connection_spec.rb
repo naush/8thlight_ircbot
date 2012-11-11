@@ -5,7 +5,7 @@ describe IRC::Connection do
 
   context "start" do
     before do
-      IRC::Connection.any_instance.stub(:puts)
+      IRC::Connection.stub(:puts)
     end
 
     it "quits when server responds with nothing" do
