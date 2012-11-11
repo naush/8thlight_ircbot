@@ -1,5 +1,5 @@
 require 'spec_helper'
-require_relative '../lib/irc/connection'
+require 'irc/connection'
 
 describe IRC::Connection do
   context "start" do

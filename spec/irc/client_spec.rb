@@ -1,5 +1,5 @@
 require 'spec_helper'
-require_relative '../lib/irc/client'
+require 'irc/client'
 
 describe IRC::Client do
   before do

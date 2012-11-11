@@ -1,5 +1,5 @@
 require 'json'
-require_relative 'bot/factory'
+require 'irc/bot/factory'
 
 module IRC
   class Connection
