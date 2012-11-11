@@ -35,15 +35,13 @@ module IRC
 
     def execute_matching_feature(input)
       feature = matching_feature(input)
-      if feature
-        input[:content] =~ direct_message_regex("#{feature.keyword_expression}")
-        reply(feature.generate_reply($1))
-      end
+      input[:content] =~ direct_message_regex("#{feature.keyword_expression}")
+      reply(feature.generate_reply($1))
     end
 
     def matching_feature(input)
       @features.find do |feature|
-        (input[:content] =~ direct_message_regex("#{feature.keyword_expression}"))
+        input[:content] =~ direct_message_regex("#{feature.keyword_expression}")
       end
     end
 

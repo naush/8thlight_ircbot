@@ -1,5 +1,6 @@
 require_relative 'ai/markov'
 require_relative 'bot'
+require_relative 'bot_features/default'
 require_relative 'bot_features/show_me'
 require_relative 'bot_features/weather'
 require_relative 'bot_features/book_reader'
@@ -15,6 +16,7 @@ module IRC
       bot.install_feature(IRC::BotFeatures::BookReader.new(ai))
       bot.install_feature(IRC::BotFeatures::Weather.new)
       bot.install_feature(IRC::BotFeatures::MeaningOfLife.new)
+      bot.install_feature(IRC::BotFeatures::Default.new)
 
       bot
     end
