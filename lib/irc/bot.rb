@@ -19,12 +19,12 @@ module IRC
       elsif input =~ /^.*PRIVMSG ##{@client.nick}: reboot$/i
         raise Exception
       else
-        feature = @features.find do |feature|
-          input =~ Regexp.new(feature.keyword_expression)
-        end
-        if feature
-          input =~ Regexp.new(feature.keyword_expression)
-          reply(feature.generate_reply($1))
+        @features.each do |feature|
+          result = input =~ Regexp.new(feature.keyword_expression)
+          if result == 0
+            reply(feature.generate_reply($1))
+            break
+          end
         end
       end
     end
