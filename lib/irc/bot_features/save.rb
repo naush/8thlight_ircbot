@@ -1,16 +1,19 @@
 module IRC
   module BotFeatures
-    class MeaningOfLife
-      def initialize(nick)
+    class Save
+      def initialize(ai, nick)
+        @ai = ai
         @nick = nick
       end
 
       def keyword_expression
-        "^.*PRIVMSG #.* :#{@nick}: what is the meaning of life.*$"
+        "^.*PRIVMSG #.* :#{@nick}: save"
       end
 
       def generate_reply(input)
-        ["42."]
+        @ai.save_corpus
+
+        ["Saved."]
       end
     end
   end

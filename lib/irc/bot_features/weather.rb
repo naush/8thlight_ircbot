@@ -3,8 +3,12 @@ require_relative '../api/wunderground'
 module IRC
   module BotFeatures
     class Weather
+      def initialize(nick)
+        @nick = nick
+      end
+
       def keyword_expression
-        'weather for (.*)$'
+        "^.*PRIVMSG #.* :#{@nick}: weather for (.*)$"
       end
 
       def generate_reply(input)

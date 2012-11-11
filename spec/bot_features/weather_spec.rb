@@ -2,10 +2,11 @@ require 'spec_helper'
 require_relative '../../lib/irc/bot_features/weather'
 
 describe IRC::BotFeatures::Weather do
-  let(:feature) { described_class.new }
+  let(:feature) { described_class.new('q') }
 
-  it 'keyword_expression is "weather for"' do
-    feature.keyword_expression.should == 'weather for (.*)$'
+  it 'matches the city' do
+    ':user!~user@0.0.0.0 PRIVMSG #q :q: weather for chicago' =~ Regexp.new(feature.keyword_expression)
+    $1.should == 'chicago'
   end
 
   it 'returns a not found message if query returns no results' do

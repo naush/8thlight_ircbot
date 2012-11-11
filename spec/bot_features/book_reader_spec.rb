@@ -7,19 +7,16 @@ describe IRC::BotFeatures::BookReader do
     end
   end
 
-  let (:feature) { described_class.new(MockAi.new) }
+  let (:feature) { described_class.new(MockAi.new, 'q') }
 
-  it 'keyword expression is "read (.*)$"' do
-    feature.keyword_expression.should == 'read (.*)$'
+  it 'matches book titles' do
+    ':user!~user@0.0.0.0 PRIVMSG #q :q: read Metamorphosis' =~ Regexp.new(feature.keyword_expression)
+    $1.should == 'Metamorphosis'
   end
 
   it 'knows books' do
     File.should_receive(:exists?).and_return(true)
 
     feature.generate_reply("ulysses").should == ["I know Ulysses."]
-  end
-
-  it 'knows metamorphosis' do
-    feature.generate_reply("metamorphosis").should == ["I know Metamorphosis."]
   end
 end

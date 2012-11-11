@@ -1,14 +1,21 @@
 module IRC
   module BotFeatures
-    class Default
+    class Spy
+      def initialize(ai)
+        @ai = ai
+      end
+
       def keyword_expression
-        '^.*$'
+        "^.*PRIVMSG #.* :(.*)"
       end
 
       def generate_reply(input)
+        @ai.write(input)
+
         []
       end
     end
   end
 end
+
 

@@ -2,10 +2,11 @@ require 'spec_helper'
 require_relative '../../lib/irc/bot_features/show_me'
 
 describe IRC::BotFeatures::ShowMe do
-  let(:feature) { described_class.new }
+  let(:feature) { described_class.new('q') }
 
-  it 'keyword_expression is "show me (.*)$ "' do
-    feature.keyword_expression.should == "show me (.*)$"
+  it 'matches query words' do
+    ':user!~user@0.0.0.0 PRIVMSG #q :q: show me ponies' =~ Regexp.new(feature.keyword_expression)
+    $1.should == 'ponies'
   end
 
   it 'returns a not found message if no query results' do

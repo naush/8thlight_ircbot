@@ -15,6 +15,6 @@ begin
   IRC::Connection.start(client)
 rescue Interrupt
 rescue Exception => e
+  p e.backtrace
   puts "> #{e.message}"
-  retry # reboot
 end

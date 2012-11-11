@@ -1,12 +1,15 @@
 require 'spec_helper'
-require_relative '../../lib/irc/api/google_image'
 require_relative '../../lib/irc/bot_features/meaning_of_life'
 
 describe IRC::BotFeatures::MeaningOfLife do
-  let(:feature) { described_class.new }
+  let(:feature) { described_class.new('q') }
 
-  it 'keyword expression is "what is the meaning of life\??$"' do
-    feature.keyword_expression.should == 'what is the meaning of life\??$'
+  it 'matches the question' do
+    result = ':user!~user@0.0.0.0 PRIVMSG #q :q: what is the meaning of life' =~ Regexp.new(feature.keyword_expression)
+    result.should == 0
+
+    result = ':user!~user@0.0.0.0 PRIVMSG #q :q: what is the meaning of life?' =~ Regexp.new(feature.keyword_expression)
+    result.should == 0
   end
 
   it 'is 42' do

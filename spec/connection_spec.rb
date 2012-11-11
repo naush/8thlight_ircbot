@@ -23,9 +23,7 @@ describe IRC::Connection do
       mock_socket.should_receive(:gets).and_return(nil)
       mock_client = mock("client", :socket => mock_socket)
       mock_bot = mock("bot")
-      mock_message = mock("message")
-      IRC::Message.should_receive(:parse).with('PRIVMSG ME').and_return(mock_message)
-      mock_bot.should_receive(:respond).with(mock_message)
+      mock_bot.should_receive(:respond).with('PRIVMSG ME')
 
       IRC::Connection.should_receive(:select).with([mock_socket]).and_return([[mock_socket]])
       IRC::BotFactory.should_receive(:assemble_bot).with(mock_client).and_return(mock_bot)
