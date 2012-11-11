@@ -6,7 +6,7 @@ module IRC
       end
 
       def self.stop(first_word)
-        @question_words ||= IO.read(File.dirname(__FILE__) + '/corpus/_question_words')
+        @question_words ||= YAML.load_file(File.dirname(__FILE__) + '/resources/question_words.yml')
         return '?' if @question_words.include?(first_word)
         return '.'
       end

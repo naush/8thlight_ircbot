@@ -8,7 +8,6 @@ module IRC
       attr_reader :store
 
       CORPUS_FILE = File.dirname(__FILE__) + '/corpus/_corpus'
-      STOP_WORDS_FILE = File.dirname(__FILE__) + '/corpus/_stop_words'
 
       def initialize
         @store = Hash.new do |store, key|
@@ -17,7 +16,7 @@ module IRC
           end
         end
 
-        @stop_words = IO.read(STOP_WORDS_FILE).split("\n")
+        @stop_words ||= YAML.load_file(File.dirname(__FILE__) + '/resources/stop_words.yml')
       end
 
       def save_corpus

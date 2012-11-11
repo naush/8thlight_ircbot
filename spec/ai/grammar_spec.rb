@@ -2,10 +2,6 @@ require_relative '../spec_helper'
 require_relative '../../lib/irc/ai/grammar'
 
 describe IRC::AI::Grammar do
-  before do
-    IO.stub(:read).and_return(['what'])
-  end
-
   it "capitalizes a sentence" do
     IRC::AI::Grammar.format("he is a robot").should == "He is a robot."
   end

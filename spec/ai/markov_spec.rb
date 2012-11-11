@@ -2,10 +2,6 @@ require_relative '../spec_helper'
 require_relative '../../lib/irc/ai/markov'
 
 describe IRC::AI::Markov do
-  before do
-    IO.stub(:read).and_return('a')
-  end
-
   it "writes one word" do
     ai = IRC::AI::Markov.new
     ai.write("one")
