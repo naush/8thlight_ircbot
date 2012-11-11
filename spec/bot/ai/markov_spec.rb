@@ -62,4 +62,9 @@ describe IRC::Bot::AI::Markov do
     sentence = ai.read("one two")
     ["One two three.", "One two four."].should include(sentence)
   end
+
+  it "changes persona" do
+    ai.change('skim')
+    ai.persona['confused_phrases'].should include('What did you say to me?')
+  end
 end

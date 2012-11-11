@@ -115,6 +115,10 @@ module IRC
           words
         end
 
+        def change(persona_name)
+          @persona = YAML.load_file(File.dirname(__FILE__) + "/personas/#{persona_name}.yml")
+        end
+
         private
 
         def random_word(tokens)
