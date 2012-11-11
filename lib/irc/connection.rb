@@ -3,7 +3,7 @@ require_relative 'bot/factory'
 
 module IRC
   class Connection
-    def self.start(client, stdin = $stdin)
+    def self.start(client)
       bot = IRC::Bot::Factory.assemble_bot(client)
 
       while true
