@@ -10,7 +10,7 @@ module IRC
         attr_accessor :persona
         attr_reader :store
 
-        STORE_FILE = File.dirname(__FILE__) + '/corpus/_store'
+        DIALOGUE_FILE = File.dirname(__FILE__) + '/resources/dialogue.json'
 
         def initialize
           @store = Hash.new do |store, key|
@@ -21,19 +21,20 @@ module IRC
 
           @stop_words ||= YAML.load_file(File.dirname(__FILE__) + '/resources/stop_words.yml')
           @persona ||= YAML.load_file(File.dirname(__FILE__) + '/personas/skim.yml')
+          @stem_words ||= YAML.laod_file(File.dirname(__FILE__) + '/resources/stem_words')
         end
 
         def save_corpus
-          File.open(STORE_FILE, 'w') do |file|
+          File.open(DIALOGUE_FILE, 'w') do |file|
             file.puts(store.to_json)
           end
         end
 
         def load_corpus
-          if File.exists?(STORE_FILE)
-            corpus = IO.read(STORE_FILE)
-            if corpus && !corpus.empty?
-              backup_store = JSON.parse(corpus)
+          if File.exists?(DIALOGUE_FILE)
+            dialog = IO.read(DIALOGUE_FILE)
+            if dialog && !dialog.empty?
+              backup_store = JSON.parse(dialog)
               backup_store.each do |key, tokens|
                 tokens.each do |word, meta|
                   store[key][word] = meta
