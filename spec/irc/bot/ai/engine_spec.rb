@@ -71,4 +71,14 @@ describe IRC::Bot::AI::Engine do
     ai.change('skim')
     ai.persona['confused_phrases'].should include('What did you say to me?')
   end
+
+  it "stems a word" do
+    ai.write("He loves you")
+    ai.stem_words['love'].should == ['loves', 'love']
+  end
+
+  it "uses a stem word" do
+    ai.write("Tiger eats bunny")
+    ai.read('eat').should == 'Tiger eats bunny.'
+  end
 end

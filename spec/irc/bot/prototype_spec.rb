@@ -3,7 +3,7 @@ require 'irc/bot/prototype'
 
 describe IRC::Bot::Prototype do
   let(:mock_client) { mock("client", :channel => '8thlight', :nick => 'q') }
-  let(:mock_ai) { mock("ai", :write => true, :load_corpus => true) }
+  let(:mock_ai) { mock("ai", :write => true, :load => true) }
   let(:bot) { IRC::Bot::Prototype.new(mock_client, mock_ai) }
 
   class MockFeature

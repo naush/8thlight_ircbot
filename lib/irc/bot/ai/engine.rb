@@ -1,5 +1,6 @@
 require 'json'
 require 'yaml'
+require 'fast_stemmer'
 require_relative 'grammar'
 
 module IRC
@@ -7,10 +8,12 @@ module IRC
     module AI
       class Engine
         attr_accessor :stop_words
+        attr_accessor :stem_words
         attr_accessor :persona
         attr_reader :store
 
         DIALOGUE_FILE = File.dirname(__FILE__) + '/resources/dialogue.json'
+        STEM_WORDS_FILE = File.dirname(__FILE__) + '/resources/stem_words.json'
 
         def initialize
           @store = Hash.new do |store, key|
@@ -21,16 +24,20 @@ module IRC
 
           @stop_words ||= YAML.load_file(File.dirname(__FILE__) + '/resources/stop_words.yml')
           @persona ||= YAML.load_file(File.dirname(__FILE__) + '/personas/skim.yml')
-          @stem_words ||= YAML.laod_file(File.dirname(__FILE__) + '/resources/stem_words')
+          @stem_words ||= {}
         end
 
-        def save_corpus
+        def save
           File.open(DIALOGUE_FILE, 'w') do |file|
             file.puts(store.to_json)
           end
+
+          File.open(STEM_WORDS_FILE, 'w') do |file|
+            file.puts(stem_words.to_json)
+          end
         end
 
-        def load_corpus
+        def load
           if File.exists?(DIALOGUE_FILE)
             dialog = IO.read(DIALOGUE_FILE)
             if dialog && !dialog.empty?
@@ -42,11 +49,26 @@ module IRC
               end
             end
           end
+
+          if File.exists?(STEM_WORDS_FILE)
+            backup_stem_words = IO.read(STEM_WORDS_FILE)
+            if backup_stem_words && !backup_stem_words.empty?
+              stem_words = JSON.parse(backup_stem_words)
+            end
+          end
         end
 
         def learn(file_path)
           corpus = IO.read(file_path)
           write(corpus)
+        end
+
+        def conflate(word)
+          stem_word = word.stem
+          stem_words[stem_word] ||= []
+          stem_words[stem_word] << word unless stem_words[stem_word].include?(word)
+          stem_words[stem_word] << stem_word unless stem_words[stem_word].include?(stem_word)
+          return stem_words[stem_word]
         end
 
         def write(text)
@@ -59,6 +81,9 @@ module IRC
               second_word = words.shift
 
               until words.empty?
+                conflate(first_word)
+                conflate(second_word)
+
                 key = [first_word, second_word].join(' ')
                 third = words.shift
                 store[key][third] += 1
@@ -77,10 +102,12 @@ module IRC
 
           until words.empty?
             word = words.shift
-            store.keys.each do |key|
-              if key.include?(word)
-                sentence = generate(key).join(' ')
-                sentences << Grammar.format(sentence)
+            conflate(word).each do |word|
+              store.keys.each do |key|
+                if key.include?(word)
+                  sentence = generate(key).join(' ')
+                  sentences << Grammar.format(sentence)
+                end
               end
             end
           end

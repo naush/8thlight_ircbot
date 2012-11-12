@@ -11,7 +11,7 @@ describe IRC::Bot::Features::Save do
 
   it 'saves' do
     ai = mock('ai')
-    ai.should_receive(:save_corpus)
+    ai.should_receive(:save)
     feature = described_class.new(ai, 'q')
     feature.generate_reply('save').should == ['Saved.']
   end

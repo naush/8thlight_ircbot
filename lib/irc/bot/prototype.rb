@@ -6,7 +6,7 @@ module IRC
       def initialize(client, ai)
         @client = client
         @ai = ai
-        @ai.load_corpus
+        @ai.load
         @features = []
       end
 

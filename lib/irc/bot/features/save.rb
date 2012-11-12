@@ -12,7 +12,7 @@ module IRC
         end
 
         def generate_reply(input)
-          @ai.save_corpus
+          @ai.save
 
           ["Saved."]
         end
