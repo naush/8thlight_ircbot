@@ -2,7 +2,11 @@ require 'spec_helper'
 require 'irc/bot/ai/engine'
 
 describe IRC::Bot::AI::Engine do
-  let(:ai) { IRC::Bot::AI::Engine.new }
+  let(:ai) do
+    ai = IRC::Bot::AI::Engine.new
+    ai.stop_words = []
+    ai
+  end
 
   it "writes one word" do
     ai.write("one")
@@ -22,12 +26,6 @@ describe IRC::Bot::AI::Engine do
   it "writes five duplicate words" do
     ai.write("cat cat cat cat cat")
     ai.store["cat cat"].values.first.should == 3
-  end
-
-  it "assigns zero frequency to stop words" do
-    ai.stop_words = ['i', 'thought']
-    ai.write("I thought I")
-    ai.store['i thought'].values.first.should == 0
   end
 
   it "writes word in lowercase" do

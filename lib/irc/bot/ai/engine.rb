@@ -60,11 +60,7 @@ module IRC
               until words.empty?
                 key = [first_word, second_word].join(' ')
                 third = words.shift
-                if stop_words.include?(third)
-                  store[key][third] = 0
-                else
-                  store[key][third] += 1
-                end
+                store[key][third] += 1
                 first_word = second_word
                 second_word = third
               end
@@ -74,6 +70,8 @@ module IRC
 
         def read(text)
           words = text.downcase.gsub(/[^a-z0-9\-\s\']/, '').split
+          words = words - @stop_words
+
           sentences = []
 
           until words.empty?
@@ -121,7 +119,7 @@ module IRC
         private
 
         def random_word(tokens)
-          tokens.group_by(&:last).max_by(&:first).last.collect(&:first).sample
+          tokens.group_by(&:last).min_by(&:first).last.collect(&:first).sample
         end
 
         def confused_phrases
