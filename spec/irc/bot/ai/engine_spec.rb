@@ -74,11 +74,11 @@ describe IRC::Bot::AI::Engine do
 
   it "stems a word" do
     ai.write("He loves you")
-    ai.stem_words['love'].should == ['loves', 'love']
+    ai.stem_words['love'].should == ['love', 'loves']
   end
 
   it "uses a stem word" do
     ai.write("Tiger eats bunny")
-    ai.read('eat').should == 'Tiger eats bunny.'
+    ['Eats bunny.', 'Tiger eats bunny.'].should include(ai.read('eat'))
   end
 end

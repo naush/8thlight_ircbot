@@ -24,7 +24,9 @@ module IRC
 
           @stop_words ||= YAML.load_file(File.dirname(__FILE__) + '/resources/stop_words.yml')
           @persona ||= YAML.load_file(File.dirname(__FILE__) + '/personas/skim.yml')
-          @stem_words ||= {}
+          @stem_words = Hash.new do |words, stem|
+            words[stem] = [stem]
+          end
         end
 
         def save
@@ -65,10 +67,8 @@ module IRC
 
         def conflate(word)
           stem_word = word.stem
-          stem_words[stem_word] ||= []
           stem_words[stem_word] << word unless stem_words[stem_word].include?(word)
-          stem_words[stem_word] << stem_word unless stem_words[stem_word].include?(stem_word)
-          return stem_words[stem_word]
+          stem_words[stem_word]
         end
 
         def write(text)
