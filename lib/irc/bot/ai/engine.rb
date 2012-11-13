@@ -53,6 +53,8 @@ module IRC
                 end
               end
             end
+          else
+            FileUtils.touch(DIALOGUE_FILE)
           end
 
           if File.exists?(STEM_WORDS_FILE)
@@ -60,6 +62,8 @@ module IRC
             if backup_stem_words && !backup_stem_words.empty?
               stem_words = JSON.parse(backup_stem_words)
             end
+          else
+            FileUtils.touch(STEM_WORDS_FILE)
           end
         end
 
