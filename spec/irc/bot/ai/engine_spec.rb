@@ -45,13 +45,13 @@ describe IRC::Bot::AI::Engine do
   it "reads one word in backward" do
     ai.write("one two three")
     ai.write("two three four")
-    ["Two three four.", "One two three four."].should include(ai.read("four"))
+    ai.read("four").should == "One two three four."
   end
 
   it "reads two words" do
     ai.write("one two three")
     ai.write("two three four")
-    ["One two three.", "One two three four.", "Two three four."].should include(ai.read("one two"))
+    ai.read("one two").should == "One two three four."
   end
 
   it "reads a sentence" do
@@ -62,7 +62,7 @@ describe IRC::Bot::AI::Engine do
 
   it "reads backward" do
     ai.write("I have a book")
-    ["I have a book.", "Have a book."].should include(ai.read("book"))
+    ["I have a book."].should include(ai.read("book"))
   end
 
   it "avoids a loop" do
@@ -93,6 +93,6 @@ describe IRC::Bot::AI::Engine do
 
   it "uses a stem word" do
     ai.write("Tiger eats bunny")
-    ["Tiger eats bunny.", "Eats bunny."].should include(ai.read("eat"))
+    ai.read("eat").should == "Tiger eats bunny."
   end
 end

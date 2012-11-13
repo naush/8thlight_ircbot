@@ -156,10 +156,11 @@ module IRC
             else
               if direction == ">"
                 words << second_word
+                key = [first_word, second_word].join(" ")
               else
                 words.unshift(second_word)
+                key = [second_word, first_word].join(" ")
               end
-              key = [first_word, second_word].join(" ")
               tokens = store[direction][key]
               store[direction].delete(key) if store[direction][key].empty?
             end
