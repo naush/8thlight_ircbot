@@ -67,7 +67,7 @@ describe IRC::Bot::AI::Engine do
 
   it "avoids a loop" do
     ai.write("one two one")
-    ["One two.", "Two one."].include?(ai.read("one"))
+    ["One two.", "Two one."].should include(ai.read("one"))
   end
 
   it "avoids a loop with capitalized keys" do
