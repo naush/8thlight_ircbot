@@ -1,6 +1,6 @@
-require_relative 'lib/irc/ai/markov'
+require_relative 'lib/irc/bot/ai/engine'
 
-ai = IRC::AI::Markov.new
+ai = IRC::Bot::AI::Engine.new
 
 while true
   print "< "
