@@ -1,7 +1,7 @@
-require 'json'
-require 'yaml'
-require 'fast_stemmer'
-require_relative 'grammar'
+require "json"
+require "yaml"
+require "fast_stemmer"
+require_relative "grammar"
 
 module IRC
   module Bot
@@ -12,27 +12,30 @@ module IRC
         attr_accessor :persona
         attr_reader :store
 
-        DIALOGUE_FILE = File.dirname(__FILE__) + '/resources/dialogue.json'
-        STEM_WORDS_FILE = File.dirname(__FILE__) + '/resources/stem_words.json'
+        DIALOGUE_FILE = File.dirname(__FILE__) + "/resources/dialogue.json"
+        STEM_WORDS_FILE = File.dirname(__FILE__) + "/resources/stem_words.json"
 
-        def initialize
-          @store = Hash.new do |store, key|
+        def new_store
+          Hash.new do |store, key|
             store[key] = Hash.new do |key, word|
               key[word] = 0
             end
           end
+        end
 
-          @stop_words = YAML.load_file(File.dirname(__FILE__) + '/resources/stop_words.yml')
-          @persona = YAML.load_file(File.dirname(__FILE__) + '/personas/skim.yml')
+        def initialize
+          @store = { ">" => new_store, "<" => new_store }
+          @stop_words = YAML.load_file(File.dirname(__FILE__) + "/resources/stop_words.yml")
+          @persona = YAML.load_file(File.dirname(__FILE__) + "/personas/skim.yml")
           @stem_words = {}
         end
 
         def save
-          File.open(DIALOGUE_FILE, 'w') do |file|
+          File.open(DIALOGUE_FILE, "w") do |file|
             file.puts(store.to_json)
           end
 
-          File.open(STEM_WORDS_FILE, 'w') do |file|
+          File.open(STEM_WORDS_FILE, "w") do |file|
             file.puts(stem_words.to_json)
           end
         end
@@ -42,9 +45,11 @@ module IRC
             dialog = IO.read(DIALOGUE_FILE)
             if dialog && !dialog.empty?
               backup_store = JSON.parse(dialog)
-              backup_store.each do |key, tokens|
-                tokens.each do |word, meta|
-                  store[key][word] = meta
+              [">", "<"].each do |direction_key|
+                backup_store[direction_key].each do |key, tokens|
+                  tokens.each do |word, meta|
+                    store[direction_key][key][word] = meta
+                  end
                 end
               end
             end
@@ -73,7 +78,7 @@ module IRC
         def write(text)
           sentences = text.split(/\.|\!|\?/)
           sentences.each do |sentence|
-            words = sentence.downcase.gsub(/[^a-z0-9\-\s\']/, '').split
+            words = sentence.downcase.gsub(/[^a-z0-9\-\s\"]/, "").split
 
             if words.size > 2
               first_word = words.shift
@@ -83,29 +88,41 @@ module IRC
                 conflate(first_word)
                 conflate(second_word)
 
-                key = [first_word, second_word].join(' ')
-                third = words.shift
-                store[key][third] += 1
+                third_word = words.shift
+                forward_key = [first_word, second_word].join(" ")
+                backward_key = [second_word, third_word].join(" ")
+                store[">"][forward_key][third_word] += 1
+                store["<"][backward_key][first_word] += 1
                 first_word = second_word
-                second_word = third
+                second_word = third_word
               end
             end
           end
         end
 
         def read(text)
-          words = text.downcase.gsub(/[^a-z0-9\-\s\']/, '').split
+          words = text.downcase.gsub(/[^a-z0-9\-\s\"]/, "").split
           words = words - @stop_words
-
           sentences = []
 
           until words.empty?
             word = words.shift
             conflate(word).each do |word|
-              store.keys.each do |key|
+              store[">"].keys.each do |key|
                 if key.include?(word)
-                  sentence = generate(key).join(' ')
-                  sentences << Grammar.format(sentence)
+                  forward_sentence = generate(key, ">")
+                  backward_sentence = generate(key, "<")
+                  sentence = (backward_sentence + forward_sentence).uniq
+                  sentences << Grammar.format(sentence.join(' '))
+                end
+              end
+
+              store["<"].keys.each do |key|
+                if key.include?(word)
+                  forward_sentence = generate(key, ">")
+                  backward_sentence = generate(key, "<")
+                  sentence = (backward_sentence + forward_sentence).uniq
+                  sentences << Grammar.format(sentence.join(' '))
                 end
               end
             end
@@ -114,14 +131,21 @@ module IRC
           if sentences.empty?
             return confused_phrases.sample
           else
-            return sentences.sample
+            return sentences.uniq.sample
           end
         end
 
-        def generate(key)
-          first_word, second_word = key.split(' ')
-          words = [first_word, second_word]
-          tokens = store[key]
+        def generate(key, direction)
+          if direction == ">"
+            first_word, second_word = key.split(" ")
+            words = [first_word, second_word]
+          else
+            second_word, first_word = key.split(" ")
+            words = [second_word, first_word]
+          end
+
+          tokens = store[direction][key]
+          store[direction].delete(key) if store[direction][key].empty?
 
           until tokens.empty?
             first_word = second_word
@@ -130,9 +154,14 @@ module IRC
             if words.include?(second_word)
               tokens.delete(second_word)
             else
-              words << second_word
-              key = [first_word, second_word].join(' ')
-              tokens = store[key]
+              if direction == ">"
+                words << second_word
+              else
+                words.unshift(second_word)
+              end
+              key = [first_word, second_word].join(" ")
+              tokens = store[direction][key]
+              store[direction].delete(key) if store[direction][key].empty?
             end
           end
 
@@ -150,7 +179,7 @@ module IRC
         end
 
         def confused_phrases
-          @persona['confused_phrases']
+          @persona["confused_phrases"]
         end
       end
     end
