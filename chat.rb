@@ -1,6 +1,7 @@
 require_relative 'lib/irc/bot/ai/engine'
 
 ai = IRC::Bot::AI::Engine.new
+ai.load
 
 while true
   print "< "
@@ -10,4 +11,5 @@ while true
   ai.write(user_input)
 end
 
+ai.save
 puts "> See ya!"

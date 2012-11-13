@@ -1,6 +1,7 @@
 require "json"
 require "yaml"
 require "fast_stemmer"
+require 'fileutils'
 require_relative "grammar"
 
 module IRC
