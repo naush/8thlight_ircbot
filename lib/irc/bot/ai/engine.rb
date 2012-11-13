@@ -47,8 +47,8 @@ module IRC
               backup_store = JSON.parse(dialog)
               [">", "<"].each do |direction_key|
                 backup_store[direction_key].each do |key, tokens|
-                  tokens.each do |word, meta|
-                    store[direction_key][key][word] = meta
+                  tokens.each do |word, frequency|
+                    store[direction_key][key][word] = frequency
                   end
                 end
               end
@@ -108,16 +108,7 @@ module IRC
           until words.empty?
             word = words.shift
             conflate(word).each do |word|
-              store[">"].keys.each do |key|
-                if key.include?(word)
-                  forward_sentence = generate(key, ">")
-                  backward_sentence = generate(key, "<")
-                  sentence = (backward_sentence + forward_sentence).uniq
-                  sentences << Grammar.format(sentence.join(' '))
-                end
-              end
-
-              store["<"].keys.each do |key|
+              (store[">"].keys + store["<"].keys).each do |key|
                 if key.include?(word)
                   forward_sentence = generate(key, ">")
                   backward_sentence = generate(key, "<")
