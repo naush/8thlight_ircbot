@@ -2,3 +2,4 @@
 tmp
 lib/irc/bot/ai/resources/dialogue.json
 lib/irc/bot/ai/resources/stem_words.json
+lib/irc/ai/corpus/*
