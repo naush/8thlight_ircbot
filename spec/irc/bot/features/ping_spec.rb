@@ -17,5 +17,3 @@ describe IRC::Bot::Features::Ping do
     feature.generate_reply("irc.example.net").should == []
   end
 end
-
-
