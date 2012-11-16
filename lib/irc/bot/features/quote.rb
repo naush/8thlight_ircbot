@@ -1,3 +1,5 @@
+require_relative '../api/quote'
+
 module IRC
   module Bot
     module Features
@@ -16,7 +18,7 @@ module IRC
           if messages.empty?
             ['Quote not found.']
           else
-            []
+            messages
           end
         end
       end
