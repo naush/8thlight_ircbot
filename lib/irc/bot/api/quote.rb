@@ -6,9 +6,9 @@ module IRC
       module Quote
         def self.query(search_terms)
           if search_terms.empty?
-            result = `curl http://www.iheartquotes.com/api/v1/random?format=json`
+            result = `curl http://www.iheartquotes.com/api/v1/random?format=json&max_lines=1`
           else
-            result = `curl http://www.iheartquotes.com/api/v1/random?format=json&source=#{search_terms}`
+            result = `curl http://www.iheartquotes.com/api/v1/random?format=json&max_lines=1&source=#{search_terms}`
           end
 
           JSON.create_id = nil
