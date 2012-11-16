@@ -1,20 +1,16 @@
 require 'spec_helper'
-require 'irc/bot/features/conversation'
+require 'irc/bot/features/tell_someone'
 
-describe IRC::Bot::Features::Conversation do
-  it 'matches the question' do
-    ai = mock('ai')
-    feature = described_class.new(ai, 'q')
-    ':user!~user@0.0.0.0 PRIVMSG #q :q: talk to me' =~ Regexp.new(feature.keyword_expression)
-    $1.should == 'talk to me'
+describe IRC::Bot::Features::TellSomeone do
+  it 'matches "tell <someone> <something>"' do
+    feature = described_class.new('q')
+    ':user!~user@0.0.0.0 PRIVMSG #q :q: tell someone something' =~ Regexp.new(feature.keyword_expression)
+    $1.should == 'someone something'
   end
 
   it 'generate reply' do
-    ai = mock('ai')
-    ai.should_receive(:write).with('foo')
-    ai.should_receive(:read).with('foo').and_return('bar')
-    feature = described_class.new(ai, 'q')
-    feature.generate_reply('foo').should == ['bar']
+    feature = described_class.new('q')
+    feature.generate_reply('someone something').should == ['someone: something']
   end
 end
 

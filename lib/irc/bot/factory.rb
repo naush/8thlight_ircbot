@@ -1,6 +1,7 @@
 require_relative 'ai/engine'
 require_relative 'prototype'
 require_relative 'features/book_reader'
+require_relative 'features/tell_someone'
 require_relative 'features/conversation'
 require_relative 'features/default'
 require_relative 'features/meaning_of_life'
@@ -28,6 +29,7 @@ module IRC
         bot.install_feature(IRC::Bot::Features::ShowMe.new(nick))
         bot.install_feature(IRC::Bot::Features::Weather.new(nick))
         bot.install_feature(IRC::Bot::Features::Save.new(ai, nick))
+        bot.install_feature(IRC::Bot::Features::TellSomeone.new(nick))
         bot.install_feature(IRC::Bot::Features::Conversation.new(ai, nick))
         bot.install_feature(IRC::Bot::Features::Spy.new(ai))
         bot.install_feature(IRC::Bot::Features::Default.new)
