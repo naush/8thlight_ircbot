@@ -83,7 +83,7 @@ module IRC
         def write(text)
           sentences = text.split(/\.|\!|\?/)
           sentences.each do |sentence|
-            words = sentence.downcase.gsub(/[^a-z0-9\-\s\"]/, "").split
+            words = sentence.downcase.gsub(/[^a-z0-9\-\s\"\']/, "").split
 
             if words.size > 2
               first_word = words.shift
@@ -106,7 +106,7 @@ module IRC
         end
 
         def read(text)
-          words = text.downcase.gsub(/[^a-z0-9\-\s\"]/, "").split
+          words = text.downcase.gsub(/[^a-z0-9\-\s\"\']/, "").split
           words = words - @stop_words
           sentences = []
 
