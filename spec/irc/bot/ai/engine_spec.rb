@@ -95,4 +95,11 @@ describe IRC::Bot::AI::Engine do
     ai.write("Tiger eats bunny")
     ai.read("eat").should == "Tiger eats bunny."
   end
+
+  it "forgets a word" do
+    ai.write("Tiger eats bunny")
+    ai.forget("tiger")
+    ai.store['>'].should be_empty
+    ai.store['<'].should be_empty
+  end
 end

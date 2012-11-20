@@ -171,9 +171,9 @@ module IRC
 
         def forget(token)
           ['>', '<'].each do |direction|
-            store[direction].each do |key|
-              if key.include?(token)
-                store[direction].delete(token)
+            store[direction].each do |key, words|
+              if key.include?(token) || words.keys.any? { |key| key.include?(token) }
+                store[direction].delete(key)
               end
             end
           end
