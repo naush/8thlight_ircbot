@@ -169,6 +169,16 @@ module IRC
           @persona = YAML.load_file(File.dirname(__FILE__) + "/personas/#{persona_name}.yml")
         end
 
+        def forget(token)
+          ['>', '<'].each do |direction|
+            store[direction].each do |key|
+              if key.include?(token)
+                store[direction].delete(token)
+              end
+            end
+          end
+        end
+
         private
 
         def random_word(tokens)
