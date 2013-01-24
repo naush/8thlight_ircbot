@@ -14,6 +14,7 @@ require_relative 'features/show_me'
 require_relative 'features/spy'
 require_relative 'features/weather'
 require_relative 'features/forget'
+require_relative 'features/jargon'
 
 module IRC
   module Bot
@@ -24,6 +25,7 @@ module IRC
         nick = client.nick
 
         bot.install_feature(IRC::Bot::Features::Ping.new(client))
+        bot.install_feature(IRC::Bot::Features::Jargon.new(nick))
         bot.install_feature(IRC::Bot::Features::Forget.new(ai, nick))
         bot.install_feature(IRC::Bot::Features::Persona.new(ai, nick))
         bot.install_feature(IRC::Bot::Features::Quote.new(nick))
